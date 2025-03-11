@@ -9,12 +9,12 @@ import SwiftUI
 
 @main
 struct Focus_FlowApp: App {
-    let persistenceController = PersistenceController.shared
+    @StateObject private var taskViewModel = TaskViewModel()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(taskViewModel)
         }
     }
 }
