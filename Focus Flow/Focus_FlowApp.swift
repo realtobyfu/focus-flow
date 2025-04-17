@@ -9,8 +9,17 @@ import SwiftUI
 
 @main
 struct Focus_FlowApp: App {
-    @StateObject private var taskViewModel = TaskViewModel()
-
+    let persistenceController = PersistenceController.shared
+    
+    // Our single source of truth: the view model
+    @StateObject private var taskViewModel: TaskViewModel
+    
+    init() {
+        // Create the VM with the container's view context
+        let context = persistenceController.container.viewContext
+        _taskViewModel = StateObject(wrappedValue: TaskViewModel(context: context))
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

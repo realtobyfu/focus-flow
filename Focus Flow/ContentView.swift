@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct ContentView: View {
     @EnvironmentObject var taskViewModel: TaskViewModel
@@ -15,7 +14,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if $taskViewModel.tasks.isEmpty {
+                if taskViewModel.tasks.isEmpty {
                     Text("No tasks yet!")
                         .foregroundColor(.secondary)
                 } else {
@@ -25,29 +24,32 @@ struct ContentView: View {
                                 TaskRowView(task: task)
                             }
                         }
-                        .onDelete(perform: delete)
+                        .onDelete(perform: deleteTasks)
                     }
                 }
             }
             .navigationTitle("FocusFlow")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
+                    Button {
                         showingAddTaskView = true
-                    }) {
+                    } label: {
                         Image(systemName: "plus")
                     }
                 }
             }
         }
         .sheet(isPresented: $showingAddTaskView) {
+            // Use the same environment object
             AddTaskView()
+                .environmentObject(taskViewModel)
         }
     }
 
-    func delete(at offsets: IndexSet) {
+    // Deleting tasks
+    func deleteTasks(at offsets: IndexSet) {
         offsets.map { taskViewModel.tasks[$0] }.forEach { task in
-            taskViewModel.deleteTask(task)
+            taskViewModel.removeTask(task)
         }
     }
 }

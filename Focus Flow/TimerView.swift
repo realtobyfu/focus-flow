@@ -5,28 +5,18 @@
 //  Created by Tobias Fu on 3/8/25.
 //
 
-import Foundation
 import SwiftUI
 
 struct TimerView: View {
-    @Environment(\.managedObjectContext) private var viewContext
+    @ObservedObject var task: TaskEntity
     
-    @ObservedObject var task: TaskEntity  // The task from the list
-    
-    // Timer states
     @State private var timeRemaining: Int = 0
     @State private var timerRunning = false
-    @State private var currentPhase: TimerPhase = .focus  // focus or break
-    
-    // We'll store a reference to the Timer
+    @State private var currentPhase: TimerPhase = .focus
     @State private var timer: Timer? = nil
-    
-    // When a block ends or is stopped, show a sheet that lets user set % completed
     @State private var showCompletionSheet = false
     
-    enum TimerPhase {
-        case focus, breakTime
-    }
+    enum TimerPhase { case focus, breakTime }
     
     var body: some View {
         VStack(spacing: 40) {
@@ -54,7 +44,6 @@ struct TimerView: View {
                 }
 
                 Button {
-                    // If user stops mid-block, we also ask for progress
                     stopTimer()
                     showCompletionSheet = true
                 } label: {
@@ -67,7 +56,7 @@ struct TimerView: View {
                 }
 
                 Button {
-                    // Additional or advanced settings
+                    // Additional settings
                 } label: {
                     Text("Settings")
                         .font(.title2)
@@ -80,28 +69,17 @@ struct TimerView: View {
             Spacer()
         }
         .padding()
-        .onAppear {
-            initializeTimer()
-        }
-        // Show a custom sheet for completion updates
+        .onAppear(perform: initializeTimer)
         .sheet(isPresented: $showCompletionSheet) {
-            BlockCompletionSheet(task: task,
-                                currentPhase: $currentPhase,
-                                onDismiss: {
-                // optional callback
-                // maybe you want to auto-start the next phase or do nothing
-            })
+            // Show your BlockCompletionSheet or a simplified version
+            BlockCompletionSheet(task: task, currentPhase: $currentPhase, onDismiss: { })
         }
         .onDisappear {
-            // Invalidate if user goes back
             timer?.invalidate()
         }
     }
     
-    // MARK: - Timer Logic
-    
     private func initializeTimer() {
-        // focus vs break time
         let duration = currentPhase == .focus ? task.blockMinutes : task.breakMinutes
         timeRemaining = Int(duration * 60)
     }
@@ -112,7 +90,6 @@ struct TimerView: View {
             if timeRemaining > 0 {
                 timeRemaining -= 1
             } else {
-                // Time up: show completion sheet
                 pauseTimer()
                 showCompletionSheet = true
             }
@@ -131,8 +108,6 @@ struct TimerView: View {
     }
     
     private var formattedTime: String {
-        let minutes = timeRemaining / 60
-        let seconds = timeRemaining % 60
-        return String(format: "%02d:%02d", minutes, seconds)
+        String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60)
     }
 }

@@ -28,14 +28,14 @@ struct TaskRowView: View {
 }
 
 struct AddTaskView: View {
-    @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var taskViewModel: TaskViewModel
     @Environment(\.presentationMode) var presentationMode
-    
+
     @State private var title = ""
     @State private var totalMinutes: Int64 = 60
     @State private var blockMinutes: Int64 = 25
     @State private var breakMinutes: Int64 = 5
-    
+
     var body: some View {
         NavigationView {
             Form {
@@ -55,29 +55,17 @@ struct AddTaskView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        addNewTask()
+                        taskViewModel.addTask(
+                            title: title,
+                            totalMinutes: totalMinutes,
+                            blockMinutes: blockMinutes,
+                            breakMinutes: breakMinutes
+                        )
                         presentationMode.wrappedValue.dismiss()
                     }
                     .disabled(title.isEmpty)
                 }
             }
-        }
-    }
-    
-    private func addNewTask() {
-        let newTask = TaskEntity(context: viewContext)
-        newTask.id = UUID()
-        newTask.title = title
-        newTask.totalMinutes = totalMinutes
-        newTask.blockMinutes = blockMinutes
-        newTask.breakMinutes = breakMinutes
-        newTask.completionPercentage = 0.0
-        newTask.dateCreated = Date()
-        
-        do {
-            try viewContext.save()
-        } catch {
-            print("Failed to save new task: \(error)")
         }
     }
 }

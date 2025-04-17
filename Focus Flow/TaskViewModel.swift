@@ -6,43 +6,70 @@
 //
 
 import SwiftUI
+import CoreData
 
 class TaskViewModel: ObservableObject {
-    @Published var tasks: [TaskEntity] = [] {
-        didSet {
-            saveTasksToUserDefaults()
-        }
-    }
+    @Published var tasks: [TaskEntity] = []
     
-    private let tasksKey = "storedTasks"
+    private let context: NSManagedObjectContext
 
-    init() {
-        loadTasksFromUserDefaults()
+    // Pass in the Core Data context from your App file
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        fetchTasks()
     }
-    
-    func addTask(_ task: TaskEntity) {
-        tasks.append(task)
-    }
-    
-    func removeTask(_ task: TaskEntity) {
-        tasks.removeAll { $0.id == task.id }
-    }
-    
-    func updateTask(_ task: TaskEntity) {
-        guard let index = tasks.firstIndex(where: { $0.id == task.id }) else { return }
-        tasks[index] = task
-    }
-    
-    func loadTasksFromUserDefaults() {
-        if let data = UserDefaults.standard.data(forKey: tasksKey),
-           let decoded = try? JSONDecoder().decode([TaskEntity].self, from: data) {
-            tasks = decoded
+
+    // Fetch all TaskEntity objects from the store
+    func fetchTasks() {
+        let request: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        // Optionally sort by dateCreated descending
+        request.sortDescriptors = [NSSortDescriptor(key: "dateCreated", ascending: false)]
+        
+        do {
+            tasks = try context.fetch(request)
+        } catch {
+            print("Failed to fetch tasks: \(error)")
         }
     }
     
-    func saveTasksToUserDefaults() {
-        if let encoded = try? JSONEncoder().encode(tasks) {
-            UserDefaults.standard.set(encoded, forKey: tasksKey)
+    // Create and save a new TaskEntity
+    func addTask(title: String,
+                 totalMinutes: Int64,
+                 blockMinutes: Int64,
+                 breakMinutes: Int64) {
+        let newTask = TaskEntity(context: context)
+        newTask.id = UUID()
+        newTask.title = title
+        newTask.totalMinutes = totalMinutes
+        newTask.blockMinutes = blockMinutes
+        newTask.breakMinutes = breakMinutes
+        newTask.completionPercentage = 0
+        newTask.dateCreated = Date()
+        
+        saveContext()
+        fetchTasks()
+    }
+
+    // Delete an existing TaskEntity
+    func removeTask(_ task: TaskEntity) {
+        context.delete(task)
+        saveContext()
+        fetchTasks()
+    }
+
+    // Example method to update completion or anything else
+    func updateTask(_ task: TaskEntity, completion: Double) {
+        task.completionPercentage = completion
+        saveContext()
+        fetchTasks()
+    }
+    
+    // MARK: - Core Data Save
+    private func saveContext() {
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save: \(error)")
         }
     }
 }

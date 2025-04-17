@@ -9,18 +9,24 @@ import CoreData
 
 struct PersistenceController {
     static let shared = PersistenceController()
-
+    
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "FocusFlow")  // must match .xcdatamodeld filename
+        // Must match "Focus_Flow" if that's the .xcdatamodeld filename:
+        container = NSPersistentContainer(name: "Focus_Flow")
+        
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
         }
+        
         container.loadPersistentStores { storeDescription, error in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+            if let error = error {
+                fatalError("Unresolved error \(error)")
             }
         }
+        
+        // Merge changes from multiple contexts automatically
+        container.viewContext.automaticallyMergesChangesFromParent = true
     }
 }
