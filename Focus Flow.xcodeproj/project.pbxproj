@@ -29,9 +29,22 @@
 		3EB61FBD2D74D2C600B69DB7 /* Focus FlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Focus FlowUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3EFFC5C72DBAEBB400C63A48 /* Exceptions for "Focus Flow" folder in "Focus Flow" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Focus-Flow-Info.plist",
+			);
+			target = 3EB61F9C2D74D2C200B69DB7 /* Focus Flow */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3EB61F9F2D74D2C200B69DB7 /* Focus Flow */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3EFFC5C72DBAEBB400C63A48 /* Exceptions for "Focus Flow" folder in "Focus Flow" target */,
+			);
 			path = "Focus Flow";
 			sourceTree = "<group>";
 		};
@@ -401,6 +414,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Focus-Flow-Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -431,6 +445,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Focus-Flow-Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
