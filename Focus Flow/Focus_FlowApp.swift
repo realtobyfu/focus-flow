@@ -14,16 +14,38 @@ struct Focus_FlowApp: App {
     // Our single source of truth: the view model
     @StateObject private var taskViewModel: TaskViewModel
     
+    // Theme state
+    @AppStorage("selectedTheme") private var selectedTheme: Int = 0
+    
     init() {
         // Create the VM with the container's view context
         let context = persistenceController.container.viewContext
         _taskViewModel = StateObject(wrappedValue: TaskViewModel(context: context))
+        
+        // Set initial theme based on saved preference
+        updateTheme()
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(taskViewModel)
+                .onAppear {
+                    // Ensure theme is applied when app launches
+                    updateTheme()
+                }
+        }
+    }
+    
+    private func updateTheme() {
+        // Update app theme based on selection
+        switch selectedTheme {
+        case 1:
+            AppTheme.current = AppTheme.green
+        case 2:
+            AppTheme.current = AppTheme.purple
+        default:
+            AppTheme.current = AppTheme.blue
         }
     }
 }

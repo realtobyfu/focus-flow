@@ -5,9 +5,10 @@ struct TimerView: View {
     @EnvironmentObject var taskViewModel: TaskViewModel
     @Environment(\.presentationMode) var presentationMode
     
-    // Color theme
-    let themeColor = Color(hex: "3A7CA5") // Primary blue
-    let accentColor = Color(hex: "D9F0FF") // Light blue accent
+    // Color theme - use named colors from assets
+    let themeColor = Color("ThemeColor")
+    let accentColor = Color("AccentColor")
+    let textColor = Color("TextColor")
     
     @State private var timeRemaining: Int = 0
     @State private var timerRunning = false
@@ -196,7 +197,7 @@ struct TimerView: View {
                 .padding(.bottom, 50)
             }
         }
-        .edgesIgnoringSafeArea(.top)
+        .ignoresSafeArea(.all, edges: .top)
         .navigationBarHidden(true)
         .onAppear(perform: initializeTimer)
         .sheet(isPresented: $showCompletionSheet) {

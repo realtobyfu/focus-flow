@@ -11,7 +11,10 @@ struct AddTaskView: View {
     @EnvironmentObject var taskViewModel: TaskViewModel
     @Environment(\.presentationMode) var presentationMode
     
+    // Color theme
     let themeColor = Color("ThemeColor")
+    let accentColor = Color("AccentColor")
+    let textColor = Color("TextColor")
     
     // Form fields
     @State private var title = ""
@@ -110,7 +113,7 @@ struct AddTaskView: View {
                 }
                 .padding(20)
             }
-            .background(accentColor.opacity(0.3).edgesIgnoringSafeArea(.all))
+            .background(Color("AccentColor").opacity(0.3).ignoresSafeArea())
             .navigationTitle("New Task")
             .navigationBarItems(
                 trailing: Button("Cancel") {
@@ -307,4 +310,3 @@ struct AddTaskView: View {
         // For "Custom" we leave the current values as is
     }
 }
-

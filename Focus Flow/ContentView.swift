@@ -294,7 +294,7 @@ struct TaskCard: View {
                     HStack {
                         Text(task.title ?? "Untitled")
                             .font(.headline)
-                            .foregroundColor(Color(hex: "2C3E50"))
+                            .foregroundColor(Color("2C3E50"))
                         
                         Spacer()
                         
@@ -380,7 +380,7 @@ struct StatisticCard: View {
                 Text(value)
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundColor(Color(hex: "2C3E50"))
+                    .foregroundColor(Color("2C3E50"))
             }
             
             Spacer()
@@ -429,84 +429,53 @@ struct StatCircle: View {
     }
 }
 
-// Weekly Progress Chart
 struct WeeklyProgressChart: View {
     let themeColor: Color
     
-    // Sample data (would be provided by the ViewModel in a real app)
     let weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     let focusMinutes = [45, 60, 30, 75, 25, 10, 50]
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 10) {
-            ForEach(0..<weekdays.count, id: \.self) { index in
-                VStack(spacing: 8) {
-                    // Bar
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(themeColor.opacity(Date().dayOfWeek == index + 1 ? 1.0 : 0.7))
-                        .frame(width: 30, height: max(20, CGFloat(focusMinutes[index]) * 1.5))
-                    
-                    // Day label
-                    Text(weekdays[index])
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
+//            ForEach(0..<weekdays.count, id: \.self) { index in
+//                BarColumn(
+//                    day: weekdays[index],
+//                    minutes: focusMinutes[index],
+//                    isToday: Date().dayOfWeek == index + 1,
+//                    themeColor: themeColor
+//                )
+//            }
         }
         .padding(.horizontal)
     }
 }
 
-// Settings View
-struct SettingsView: View {
-    @Environment(\.presentationMode) var presentationMode
+// Breaking down the complex view into a simpler component
+struct BarColumn: View {
+    let day: String
+    let minutes: Int
+    let isToday: Bool
+    let themeColor: Color
     
     var body: some View {
-        NavigationView {
-            List {
-                Section(header: Text("Notifications")) {
-                    Toggle("Session Completion", isOn: .constant(true))
-                    Toggle("Break Time", isOn: .constant(true))
-                    Toggle("Daily Reminder", isOn: .constant(false))
-                }
-                
-                Section(header: Text("Sound")) {
-                    Toggle("Timer Sound", isOn: .constant(true))
-                    Toggle("Vibration", isOn: .constant(true))
-                }
-                
-                Section(header: Text("Default Timer")) {
-                    HStack {
-                        Text("Focus Duration")
-                        Spacer()
-                        Text("25 min")
-                            .foregroundColor(.gray)
-                    }
-                    
-                    HStack {
-                        Text("Break Duration")
-                        Spacer()
-                        Text("5 min")
-                            .foregroundColor(.gray)
-                    }
-                }
-                
-                Section(header: Text("About")) {
-                    HStack {
-                        Text("Version")
-                        Spacer()
-                        Text("1.0.0")
-                            .foregroundColor(.gray)
-                    }
-                }
-            }
-            .listStyle(InsetGroupedListStyle())
-            .navigationTitle("Settings")
-            .navigationBarItems(
-                trailing: Button("Done") {
-                    presentationMode.wrappedValue.dismiss()
-                }
-            )
+        VStack(spacing: 8) {
+            // Bar
+            RoundedRectangle(cornerRadius: 4)
+                .fill(barColor)
+                .frame(width: 30, height: barHeight)
+            
+            // Day label
+            Text(day)
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
+    }
+    
+    private var barColor: Color {
+        themeColor.opacity(isToday ? 1.0 : 0.7)
+    }
+    
+    private var barHeight: CGFloat {
+        max(20, CGFloat(minutes) * 1.5)
     }
 }
