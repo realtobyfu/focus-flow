@@ -17,6 +17,8 @@ struct ContentView: View {
                 // Header
                 ZStack {
                     themeColor
+                        .ignoresSafeArea(edges: .top)
+
                     VStack {
                         HStack {
                             Text(selectedTab == 0 ? "Focus Flow" : (selectedTab == 1 ? "Statistics" : "Settings"))
@@ -54,7 +56,8 @@ struct ContentView: View {
                 // Custom Tab Bar
                 customTabBar
             }
-            .edgesIgnoringSafeArea(.top)
+//            .safeAreaInset(edge: .top) { Color.clear }
+//            .edgesIgnoringSafeArea(.top)
             .sheet(isPresented: $showingAddTaskView) {
                 AddTaskView()
                     .environmentObject(taskViewModel)
@@ -437,18 +440,25 @@ struct WeeklyProgressChart: View {
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 10) {
-//            ForEach(0..<weekdays.count, id: \.self) { index in
-//                BarColumn(
-//                    day: weekdays[index],
-//                    minutes: focusMinutes[index],
-//                    isToday: Date().dayOfWeek == index + 1,
-//                    themeColor: themeColor
-//                )
-//            }
+            ForEach(0..<weekdays.count, id: \.self) { index in
+                BarColumn(
+                    day: weekdays[index],
+                    minutes: focusMinutes[index],
+                    isToday: Date().dayOfWeek == index + 1,
+                    themeColor: themeColor
+                )
+            }
         }
         .padding(.horizontal)
     }
 }
+
+extension Date {
+    var dayOfWeek: Int {
+        return Calendar.current.component(.weekday, from: self)
+    }
+}
+
 
 // Breaking down the complex view into a simpler component
 struct BarColumn: View {

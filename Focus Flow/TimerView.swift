@@ -197,7 +197,7 @@ struct TimerView: View {
                 .padding(.bottom, 50)
             }
         }
-        .ignoresSafeArea(.all, edges: .top)
+//        .ignoresSafeArea(.all, edges: .top)
         .navigationBarHidden(true)
         .onAppear(perform: initializeTimer)
         .sheet(isPresented: $showCompletionSheet) {
