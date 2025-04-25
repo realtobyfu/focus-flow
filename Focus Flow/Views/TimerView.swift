@@ -30,6 +30,7 @@ struct TimerView: View {
                 // Top Bar
                 ZStack {
                     themeColor
+                        .edgesIgnoringSafeArea(.top)
                     HStack {
                         Button(action: {
                             // Confirm exit if timer is running
