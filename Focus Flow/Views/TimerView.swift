@@ -5,6 +5,9 @@ struct TimerView: View {
     @EnvironmentObject var taskViewModel: TaskViewModel
     @Environment(\.presentationMode) var presentationMode
     
+    // App blocking manager
+    @StateObject private var blockingManager = AppBlockingManager()
+    
     // Color theme - use named colors from assets
     let themeColor = Color("ThemeColor")
     let accentColor = Color("AccentColor")
@@ -18,6 +21,7 @@ struct TimerView: View {
     @State private var completedIntervals = 0
     @State private var totalTimeElapsed: Int64 = 0
     @State private var isPaused = false
+    @State private var showBlockingNotice = false
     
     enum TimerPhase: String {
         case focus = "Focus Time"
@@ -26,7 +30,10 @@ struct TimerView: View {
     
     var body: some View {
         ZStack {
-            VStack {
+            Color.themeBackground
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack(spacing: 0) {
                 // Top Bar
                 ZStack {
                     themeColor
@@ -35,48 +42,55 @@ struct TimerView: View {
                         Button(action: {
                             // Confirm exit if timer is running
                             if timerRunning {
-                                // Would normally add an alert here
                                 stopTimer()
+                                blockingManager.stopBlocking()
                             }
                             presentationMode.wrappedValue.dismiss()
                         }) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 20, weight: .medium))
-                                .foregroundColor(.white)
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 20, weight: .medium))
+                                
+                                Text("Back")
+                                    .font(.headline)
+                            }
+                            .foregroundColor(.white)
                         }
                         .padding(.leading)
                         
                         Spacer()
-                        
-                        Text(task.title ?? "Focus Session")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            // Open settings or options
-                        }) {
-                            Image(systemName: "ellipsis")
-                                .font(.system(size: 20, weight: .medium))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.trailing)
                     }
                 }
                 .frame(height: 60)
                 
+                // Task title
+                Text(task.title ?? "Focus Session")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.themeTextPrimary)
+                    .padding(.top, 20)
+                
                 // Session Status
-                VStack(spacing: 4) {
+                HStack {
                     Text(currentPhase.rawValue)
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .font(.headline)
+                        .foregroundColor(currentPhase == .focus ? themeColor : .green)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.white)
+                                .shadow(color: Color.black.opacity(0.05), radius: 3)
+                        )
                     
-                    Text(currentPhase == .focus ? "\(completedIntervals + 1) of \(calculateTotalIntervals())" : "Break")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    if currentPhase == .focus {
+                        Text("\(completedIntervals + 1) of \(calculateTotalIntervals())")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 4)
+                    }
                 }
-                .padding(.top, 20)
+                .padding(.top, 16)
                 
                 // Timer Circle
                 ZStack {
@@ -105,7 +119,25 @@ struct TimerView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                .padding(.vertical, 30)
+                .padding(.vertical, 20)
+                
+                // App Blocking Status (if enabled)
+                if blockingManager.isBlockingEnabled && currentPhase == .focus && timerRunning {
+                    HStack {
+                        Image(systemName: "bell.slash.fill")
+                            .foregroundColor(.orange)
+                        
+                        Text("Distracting apps are being blocked")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 16)
+                    .background(Color.orange.opacity(0.1))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                    .transition(.opacity)
+                }
                 
                 // Session Progress
                 VStack(spacing: 8) {
@@ -198,9 +230,16 @@ struct TimerView: View {
                 .padding(.bottom, 50)
             }
         }
-//        .ignoresSafeArea(.all, edges: .top)
         .navigationBarHidden(true)
-        .onAppear(perform: initializeTimer)
+        .onAppear(perform: {
+            initializeTimer()
+            
+            // Handle the weird animation issue by using a slight delay
+            // This allows the view transition to complete before initializing
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                // Additional setup if needed
+            }
+        })
         .sheet(isPresented: $showCompletionSheet) {
             BlockCompletionSheet(task: task,
                                 currentPhase: $currentPhase,
@@ -214,8 +253,16 @@ struct TimerView: View {
                 }
             }
         }
+        .alert("App Blocking Enabled", isPresented: $showBlockingNotice) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Distracting apps will be blocked during your focus session to help you stay on task.")
+        }
         .onDisappear {
             timer?.invalidate()
+            if timerRunning {
+                blockingManager.stopBlocking()
+            }
         }
     }
     
@@ -229,6 +276,17 @@ struct TimerView: View {
     private func startTimer() {
         timerRunning = true
         isPaused = false
+        
+        // Start app blocking if enabled and in focus mode
+        if currentPhase == .focus && blockingManager.isBlockingEnabled {
+            blockingManager.startBlocking()
+            
+            // Show notice first time only
+            if completedIntervals == 0 && !showBlockingNotice {
+                showBlockingNotice = true
+            }
+        }
+        
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             if timeRemaining > 0 {
                 timeRemaining -= 1
@@ -242,6 +300,11 @@ struct TimerView: View {
                 timerRunning = false
                 timer?.invalidate()
                 timer = nil
+                
+                // Stop app blocking if in break mode
+                if currentPhase == .breakTime {
+                    blockingManager.stopBlocking()
+                }
                 
                 // Show completion dialog
                 showCompletionSheet = true
@@ -278,6 +341,9 @@ struct TimerView: View {
                 // Update task progress based on completed time
                 taskViewModel.updateTaskProgress(task, completedMinutes: completedMinutes)
             }
+            
+            // Stop app blocking
+            blockingManager.stopBlocking()
             
             switchToBreak()
         } else {

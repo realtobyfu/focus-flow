@@ -14,6 +14,9 @@ struct Focus_FlowApp: App {
     // Our single source of truth: the view model
     @StateObject private var taskViewModel: TaskViewModel
     
+    // App Blocking Manager
+    @StateObject private var blockingManager = AppBlockingManager()
+    
     // Theme state
     @AppStorage("selectedTheme") private var selectedTheme: Int = 0
     
@@ -30,10 +33,17 @@ struct Focus_FlowApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(taskViewModel)
+                .environmentObject(blockingManager)
                 .onAppear {
                     // Ensure theme is applied when app launches
                     updateTheme()
+                    
+                    // Refresh tasks when app launches
+                    taskViewModel.fetchTasks()
                 }
+        }
+        .onChange(of: selectedTheme) { newValue in
+            updateTheme()
         }
     }
     

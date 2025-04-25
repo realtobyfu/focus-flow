@@ -2,21 +2,18 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var taskViewModel: TaskViewModel
+    @StateObject private var blockingManager = AppBlockingManager()
     @State private var showingAddTaskView = false
     @State private var selectedTab = 0
     @State private var showingSettings = false
-    
-    // Color theme
-    let themeColor = Color("ThemeColor") // Primary blue
-    let accentColor = Color("AccentColor") // Light blue accent
-    let textColor = Color("TextColor") // Dark blue-gray for text
+    @State private var selectedTask: TaskEntity? = nil
     
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
                 // Header
                 ZStack {
-                    themeColor
+                    Color.themePrimary
                         .ignoresSafeArea(edges: .top)
 
                     VStack {
@@ -56,23 +53,24 @@ struct ContentView: View {
                 // Custom Tab Bar
                 customTabBar
             }
-//            .safeAreaInset(edge: .top) { Color.clear }
-//            .edgesIgnoringSafeArea(.top)
             .sheet(isPresented: $showingAddTaskView) {
                 AddTaskView()
                     .environmentObject(taskViewModel)
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
+                    .environmentObject(taskViewModel)
+                    .environmentObject(blockingManager)
             }
         }
-        .accentColor(themeColor)
+        .accentColor(Color.themePrimary)
+        .environmentObject(blockingManager)
     }
     
     // MARK: - Tasks Tab
     var tasksTab: some View {
         ZStack {
-            accentColor.opacity(0.3)
+            Color.themeBackground
                 .edgesIgnoringSafeArea(.all)
             
             VStack {
@@ -90,7 +88,7 @@ struct ContentView: View {
                             icon: "timer",
                             title: "Focus Time",
                             value: taskViewModel.totalFocusTime,
-                            color: themeColor
+                            color: Color.themePrimary
                         )
                     }
                     .padding(.horizontal)
@@ -102,7 +100,7 @@ struct ContentView: View {
                     Text("My Tasks")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(textColor)
+                        .foregroundColor(Color.themeTextPrimary)
                     
                     Spacer()
                     
@@ -113,10 +111,10 @@ struct ContentView: View {
                     } label: {
                         HStack {
                             Text(taskViewModel.filterMode.rawValue)
-                                .foregroundColor(Color("ThemeColor"))
+                                .foregroundColor(Color.themePrimary)
                             Image(systemName: "chevron.down")
                                 .font(.system(size: 14))
-                                .foregroundColor(Color("ThemeColor"))
+                                .foregroundColor(Color.themePrimary)
                         }
                     }
                 }
@@ -130,7 +128,7 @@ struct ContentView: View {
                     ScrollView {
                         LazyVStack(spacing: 16) {
                             ForEach(taskViewModel.filteredTasks) { task in
-                                TaskCard(task: task, themeColor: Color("ThemeColor"))
+                                TaskCardNavigationLink(task: task)
                             }
                         }
                         .padding(.horizontal)
@@ -153,9 +151,9 @@ struct ContentView: View {
                     .foregroundColor(.white)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 24)
-                    .background(themeColor)
+                    .background(Color.themePrimary)
                     .cornerRadius(25)
-                    .shadow(color: themeColor.opacity(0.3), radius: 5, x: 0, y: 3)
+                    .shadow(color: Color.themePrimary.opacity(0.3), radius: 5, x: 0, y: 3)
                 }
                 .padding(.bottom, 16)
             }
@@ -165,7 +163,7 @@ struct ContentView: View {
     // MARK: - Statistics Tab
     var statisticsTab: some View {
         ZStack {
-            accentColor.opacity(0.3)
+            Color.themeBackground
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 24) {
@@ -174,9 +172,9 @@ struct ContentView: View {
                     Text("Weekly Progress")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(textColor)
+                        .foregroundColor(Color.themeTextPrimary)
                     
-                    WeeklyProgressChart(themeColor: themeColor)
+                    WeeklyProgressChart(themeColor: Color.themePrimary)
                         .frame(height: 220)
                         .padding()
                         .background(Color.white)
@@ -190,7 +188,7 @@ struct ContentView: View {
                     Text("Task Stats")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(textColor)
+                        .foregroundColor(Color.themeTextPrimary)
                     
                     HStack(spacing: 15) {
                         StatCircle(
@@ -202,7 +200,7 @@ struct ContentView: View {
                         StatCircle(
                             value: 100 - taskViewModel.completedTasksPercentage,
                             label: "In Progress",
-                            color: themeColor
+                            color: Color.themePrimary
                         )
                     }
                     .padding()
@@ -225,16 +223,16 @@ struct ContentView: View {
             
             Image(systemName: "checklist")
                 .font(.system(size: 70))
-                .foregroundColor(Color("ThemeColor").opacity(0.3))
+                .foregroundColor(Color.themePrimary.opacity(0.3))
             
             Text("No tasks yet")
                 .font(.title2)
                 .fontWeight(.semibold)
-                .foregroundColor(Color("TextColor").opacity(0.7))
+                .foregroundColor(Color.themeTextPrimary.opacity(0.7))
             
             Text("Tap the button below to add your first task")
                 .font(.subheadline)
-                .foregroundColor(Color("TextColor").opacity(0.5))
+                .foregroundColor(Color.themeTextPrimary.opacity(0.5))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             
@@ -255,7 +253,7 @@ struct ContentView: View {
                     Text("Tasks")
                         .font(.caption)
                 }
-                .foregroundColor(selectedTab == 0 ? Color("ThemeColor") : Color.gray)
+                .foregroundColor(selectedTab == 0 ? Color.themePrimary : Color.gray)
                 .frame(maxWidth: .infinity)
             }
             
@@ -269,7 +267,7 @@ struct ContentView: View {
                     Text("Stats")
                         .font(.caption)
                 }
-                .foregroundColor(selectedTab == 1 ? themeColor : Color.gray)
+                .foregroundColor(selectedTab == 1 ? Color.themePrimary : Color.gray)
                 .frame(maxWidth: .infinity)
             }
             
@@ -281,7 +279,24 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Supporting Components
+// MARK: - Fixed Navigation Task Card
+
+// Fixed task card with NavigationLink to avoid animation issues
+struct TaskCardNavigationLink: View {
+    @ObservedObject var task: TaskEntity
+    
+    var body: some View {
+        ZStack {
+            NavigationLink(destination: TimerView(task: task)) {
+                EmptyView()
+            }
+            .opacity(0)
+            
+            TaskCard(task: task, themeColor: Color.themePrimary)
+                .contentShape(Rectangle())
+        }
+    }
+}
 
 // Task Card Component with working progress bar
 struct TaskCard: View {
@@ -289,63 +304,61 @@ struct TaskCard: View {
     var themeColor: Color
     
     var body: some View {
-        NavigationLink(destination: TimerView(task: task)) {
-            VStack(spacing: 0) {
-                // Task content
-                VStack(alignment: .leading, spacing: 12) {
-                    // Title and completion percentage
-                    HStack {
-                        Text(task.title ?? "Untitled")
-                            .font(.headline)
-                            .foregroundColor(Color("2C3E50"))
-                        
-                        Spacer()
-                        
-                        Text("\(Int(task.completionPercentage))%")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(themeColor)
-                    }
+        VStack(spacing: 0) {
+            // Task content
+            VStack(alignment: .leading, spacing: 12) {
+                // Title and completion percentage
+                HStack {
+                    Text(task.title ?? "Untitled")
+                        .font(.headline)
+                        .foregroundColor(Color.themeTextPrimary)
                     
-                    // Progress bar (fixed)
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            // Background
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(height: 8)
-                                .cornerRadius(4)
-                            
-                            // Progress
-                            Rectangle()
-                                .fill(progressColor)
-                                .frame(width: max(0, min(CGFloat(task.completionPercentage) / 100.0 * geometry.size.width, geometry.size.width)), height: 8)
-                                .cornerRadius(4)
-                        }
-                    }
-                    .frame(height: 8)
+                    Spacer()
                     
-                    // Time info
-                    HStack {
-                        // Total time
-                        Label("\(task.totalMinutes) min total", systemImage: "clock")
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
+                    Text("\(Int(task.completionPercentage))%")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(themeColor)
+                }
+                
+                // Progress bar (fixed)
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        // Background
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.2))
+                            .frame(height: 8)
+                            .cornerRadius(4)
                         
-                        Spacer()
-                        
-                        // Focus/Break time
-                        Label("\(task.blockMinutes)/\(task.breakMinutes)", systemImage: "timer")
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                            .help("Focus/Break time in minutes")
+                        // Progress
+                        Rectangle()
+                            .fill(progressColor)
+                            .frame(width: max(0, min(CGFloat(task.completionPercentage) / 100.0 * geometry.size.width, geometry.size.width)), height: 8)
+                            .cornerRadius(4)
                     }
                 }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: Color.black.opacity(0.07), radius: 5)
+                .frame(height: 8)
+                
+                // Time info
+                HStack {
+                    // Total time
+                    Label("\(task.totalMinutes) min total", systemImage: "clock")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    // Focus/Break time
+                    Label("\(task.blockMinutes)/\(task.breakMinutes)", systemImage: "timer")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .help("Focus/Break time in minutes")
+                }
             }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.07), radius: 5)
         }
     }
     
@@ -360,6 +373,3 @@ struct TaskCard: View {
         }
     }
 }
-
-
-

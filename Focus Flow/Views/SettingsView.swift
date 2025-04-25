@@ -10,6 +10,8 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var taskViewModel: TaskViewModel
+    @StateObject private var blockingManager = AppBlockingManager()
+    
     @AppStorage("selectedTheme") private var selectedTheme: Int = 0
     
     // Theme options
@@ -22,6 +24,11 @@ struct SettingsView: View {
                 Section(header: Text("App Theme")) {
                     ForEach(0..<themes.count, id: \.self) { index in
                         HStack {
+                            // Theme color preview
+                            Circle()
+                                .fill(themeColorForIndex(index))
+                                .frame(width: 20, height: 20)
+                            
                             Text(themes[index])
                             Spacer()
                             if selectedTheme == index {
@@ -39,15 +46,42 @@ struct SettingsView: View {
                     }
                 }
                 
+                // App Blocking
+                Section(header: Text("Focus Tools")) {
+                    NavigationLink(destination: AppBlockingSettingsView(blockingManager: blockingManager)) {
+                        HStack {
+                            Image(systemName: "bell.slash.fill")
+                                .foregroundColor(Color.themePrimary)
+                                .frame(width: 24, height: 24)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("App Blocking")
+                                    .font(.headline)
+                                Text(blockingManager.isBlockingEnabled ? "Enabled" : "Disabled")
+                                    .font(.caption)
+                                    .foregroundColor(blockingManager.isBlockingEnabled ? .green : .gray)
+                            }
+                        }
+                    }
+                }
+                
                 Section(header: Text("Notifications")) {
                     Toggle("Session Completion", isOn: .constant(true))
+                        .toggleStyle(SwitchToggleStyle(tint: Color.themePrimary))
+                    
                     Toggle("Break Time", isOn: .constant(true))
+                        .toggleStyle(SwitchToggleStyle(tint: Color.themePrimary))
+                    
                     Toggle("Daily Reminder", isOn: .constant(false))
+                        .toggleStyle(SwitchToggleStyle(tint: Color.themePrimary))
                 }
                 
                 Section(header: Text("Sound")) {
                     Toggle("Timer Sound", isOn: .constant(true))
+                        .toggleStyle(SwitchToggleStyle(tint: Color.themePrimary))
+                    
                     Toggle("Vibration", isOn: .constant(true))
+                        .toggleStyle(SwitchToggleStyle(tint: Color.themePrimary))
                 }
                 
                 Section(header: Text("Default Timer")) {
@@ -102,6 +136,17 @@ struct SettingsView: View {
         .onAppear {
             // Load current theme
             updateTheme()
+        }
+    }
+    
+    private func themeColorForIndex(_ index: Int) -> Color {
+        switch index {
+        case 1:
+            return Color("38B09D") // Green
+        case 2:
+            return Color("7B68EE") // Purple
+        default:
+            return Color("ThemeColor") // Blue
         }
     }
     
