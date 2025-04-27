@@ -18,6 +18,7 @@ enum TaskFilterMode: String {
 class TaskViewModel: ObservableObject {
     @Published var tasks: [TaskEntity] = []
     @Published var filterMode: TaskFilterMode = .all
+    @Published var currentTask: TaskEntity?
     
     private let context: NSManagedObjectContext
     
@@ -105,10 +106,11 @@ class TaskViewModel: ObservableObject {
     }
     
     // Create and save a new TaskEntity
-    func addTask(title: String,
+    func createTask(title: String,
                  totalMinutes: Int64,
                  blockMinutes: Int64,
-                 breakMinutes: Int64) {
+                 breakMinutes: Int64,
+                 tag: String = "") {
         let newTask = TaskEntity(context: context)
         newTask.id = UUID()
         newTask.title = title
@@ -117,9 +119,24 @@ class TaskViewModel: ObservableObject {
         newTask.breakMinutes = breakMinutes
         newTask.completionPercentage = 0
         newTask.dateCreated = Date()
+        newTask.tag = tag
         
         saveContext()
         fetchTasks()
+        
+        // Set this as the current task
+        currentTask = newTask
+    }
+    
+    // This is just an alias for backward compatibility
+    func addTask(title: String,
+                 totalMinutes: Int64,
+                 blockMinutes: Int64,
+                 breakMinutes: Int64) {
+        createTask(title: title, 
+                  totalMinutes: totalMinutes, 
+                  blockMinutes: blockMinutes, 
+                  breakMinutes: breakMinutes)
     }
 
     // Delete an existing TaskEntity

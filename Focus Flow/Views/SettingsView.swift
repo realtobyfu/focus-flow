@@ -13,6 +13,8 @@ struct SettingsView: View {
     @StateObject private var blockingManager = AppBlockingManager()
     
     @AppStorage("selectedTheme") private var selectedTheme: Int = 0
+    @AppStorage("defaultFocusDuration") private var defaultFocusDuration: Int = 25
+    @AppStorage("defaultBreakDuration") private var defaultBreakDuration: Int = 5
     
     // Theme options
     let themes = ["Blue", "Green", "Purple"]
@@ -85,19 +87,19 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("Default Timer")) {
-                    HStack {
-                        Text("Focus Duration")
-                        Spacer()
-                        Text("25 min")
-                            .foregroundColor(.gray)
+                    Picker(selection: $defaultFocusDuration, label: Text("Focus Duration")) {
+                        ForEach([15, 25, 30, 45, 60], id: \ .self) { value in
+                            Text("\(value) min").tag(value)
+                        }
                     }
+                    .pickerStyle(WheelPickerStyle())
                     
-                    HStack {
-                        Text("Break Duration")
-                        Spacer()
-                        Text("5 min")
-                            .foregroundColor(.gray)
+                    Picker(selection: $defaultBreakDuration, label: Text("Break Duration")) {
+                        ForEach([5, 10, 15, 20], id: \ .self) { value in
+                            Text("\(value) min").tag(value)
+                        }
                     }
+                    .pickerStyle(WheelPickerStyle())
                 }
                 
                 Section(header: Text("App Data")) {

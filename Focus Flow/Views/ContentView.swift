@@ -18,7 +18,7 @@ struct ContentView: View {
 
                     VStack {
                         HStack {
-                            Text(selectedTab == 0 ? "Focus Flow" : (selectedTab == 1 ? "Statistics" : "Settings"))
+                            Text(selectedTab == 0 ? "Focus Flow" : (selectedTab == 1 ? "Tasks" : "Statistics"))
                                 .font(.system(size: 28, weight: .bold))
                                 .foregroundColor(.white)
                             
@@ -40,13 +40,17 @@ struct ContentView: View {
                 
                 // Content based on selected tab
                 TabView(selection: $selectedTab) {
+                    // Home/Focus Tab
+                    HomeView()
+                        .tag(0)
+                        
                     // Tasks Tab
                     tasksTab
-                        .tag(0)
+                        .tag(1)
                     
                     // Statistics Tab
                     statisticsTab
-                        .tag(1)
+                        .tag(2)
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
 
@@ -243,39 +247,33 @@ struct ContentView: View {
     // Custom tab bar
     var customTabBar: some View {
         HStack(spacing: 0) {
-            Spacer()
+            // Focus Tab
+            TabBarButton(
+                title: "Focus",
+                icon: "timer",
+                isSelected: selectedTab == 0,
+                action: { selectedTab = 0 }
+            )
             
             // Tasks Tab
-            Button(action: { selectedTab = 0 }) {
-                VStack(spacing: 4) {
-                    Image(systemName: "list.bullet")
-                        .font(.system(size: 22))
-                    Text("Tasks")
-                        .font(.caption)
-                }
-                .foregroundColor(selectedTab == 0 ? Color.themePrimary : Color.gray)
-                .frame(maxWidth: .infinity)
-            }
-            
-            Spacer()
+            TabBarButton(
+                title: "Tasks",
+                icon: "checklist",
+                isSelected: selectedTab == 1,
+                action: { selectedTab = 1 }
+            )
             
             // Stats Tab
-            Button(action: { selectedTab = 1 }) {
-                VStack(spacing: 4) {
-                    Image(systemName: "chart.bar")
-                        .font(.system(size: 22))
-                    Text("Stats")
-                        .font(.caption)
-                }
-                .foregroundColor(selectedTab == 1 ? Color.themePrimary : Color.gray)
-                .frame(maxWidth: .infinity)
-            }
-            
-            Spacer()
+            TabBarButton(
+                title: "Stats",
+                icon: "chart.bar.fill",
+                isSelected: selectedTab == 2,
+                action: { selectedTab = 2 }
+            )
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 8)
         .background(Color.white)
-        .shadow(color: Color.black.opacity(0.07), radius: 5, y: -3)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, y: -2)
     }
 }
 
@@ -319,6 +317,21 @@ struct TaskCard: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(themeColor)
+                }
+                
+                // Show tag if available
+                if let tag = task.tag, !tag.isEmpty {
+                    HStack {
+                        Text(tag)
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(tagColor(for: tag).opacity(0.2))
+                            .foregroundColor(tagColor(for: tag))
+                            .cornerRadius(4)
+                        
+                        Spacer()
+                    }
                 }
                 
                 // Progress bar (fixed)
@@ -370,6 +383,24 @@ struct TaskCard: View {
             return themeColor
         } else {
             return Color.orange
+        }
+    }
+    
+    // Return a consistent color based on tag name
+    private func tagColor(for tag: String) -> Color {
+        switch tag.lowercased() {
+        case "focus":
+            return .orange
+        case "read":
+            return .yellow
+        case "study":
+            return .teal
+        case "work":
+            return .green
+        case "fitness":
+            return .orange.opacity(0.8)
+        default:
+            return themeColor
         }
     }
 }

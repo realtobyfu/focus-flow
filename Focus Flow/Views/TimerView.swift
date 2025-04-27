@@ -36,7 +36,7 @@ struct TimerView: View {
             VStack(spacing: 0) {
                 // Top Bar
                 ZStack {
-                    themeColor
+                    Color.themePrimary
                         .edgesIgnoringSafeArea(.top)
                     HStack {
                         Button(action: {
@@ -63,14 +63,24 @@ struct TimerView: View {
                 }
                 .frame(height: 60)
                 
-                // Task title
-                Text(task.title ?? "Focus Session")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.themeTextPrimary)
-                    .padding(.top, 20)
+                // Task title / tag info
+                Group {
+                    Text(task.title ?? "Focus Session")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.themeTextPrimary)
+                        .padding(.top, 20)
+                    
+                    // Display tag if available
+                    if let tag = task.tag, !tag.isEmpty {
+                        Text(tag)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            .padding(.top, 2)
+                    }
+                }
                 
-                // Session Status
+                // Session Type Indicator
                 HStack {
                     Text(currentPhase.rawValue)
                         .font(.headline)
@@ -92,25 +102,25 @@ struct TimerView: View {
                 }
                 .padding(.top, 16)
                 
-                // Timer Circle
+                // Timer Circle - larger and more prominent
                 ZStack {
                     // Outer progress ring
                     CircularProgressView(progress: calculateProgress(),
                                         lineWidth: 12,
                                         primaryColor: currentPhase == .focus ? themeColor : Color.green,
                                         secondaryColor: Color.gray.opacity(0.2))
-                        .frame(width: 280, height: 280)
+                        .frame(width: 300, height: 300)
                     
                     // Inner white circle with time
                     Circle()
                         .fill(Color.white)
-                        .frame(width: 220, height: 220)
+                        .frame(width: 240, height: 240)
                         .shadow(color: Color.black.opacity(0.1), radius: 5)
                     
                     // Time display
                     VStack(spacing: 8) {
                         Text(formatTime(timeRemaining))
-                            .font(.system(size: 54, weight: .bold))
+                            .font(.system(size: 64, weight: .bold))
                             .foregroundColor(themeColor)
                             .monospacedDigit()
                         
@@ -139,38 +149,41 @@ struct TimerView: View {
                     .transition(.opacity)
                 }
                 
-                // Session Progress
-                VStack(spacing: 8) {
-                    HStack {
-                        Text("Session Progress:")
-                            .font(.headline)
-                        
-                        Spacer()
-                        
-                        Text("\(Int(task.completionPercentage))%")
-                            .font(.headline)
-                            .foregroundColor(themeColor)
-                    }
-                    .padding(.horizontal)
-                    
-                    // Progress bar
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(height: 10)
-                                .cornerRadius(5)
+                // Progress information
+                if currentPhase == .focus {
+                    // Session Progress (only show in focus mode)
+                    VStack(spacing: 8) {
+                        HStack {
+                            Text("Session Progress:")
+                                .font(.headline)
                             
-                            Rectangle()
-                                .fill(themeColor)
-                                .frame(width: max(0, min(CGFloat(task.completionPercentage) / 100.0 * geometry.size.width, geometry.size.width)), height: 10)
-                                .cornerRadius(5)
+                            Spacer()
+                            
+                            Text("\(Int(task.completionPercentage))%")
+                                .font(.headline)
+                                .foregroundColor(themeColor)
                         }
+                        .padding(.horizontal)
+                        
+                        // Progress bar
+                        GeometryReader { geometry in
+                            ZStack(alignment: .leading) {
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(height: 10)
+                                    .cornerRadius(5)
+                                
+                                Rectangle()
+                                    .fill(themeColor)
+                                    .frame(width: max(0, min(CGFloat(task.completionPercentage) / 100.0 * geometry.size.width, geometry.size.width)), height: 10)
+                                    .cornerRadius(5)
+                            }
+                        }
+                        .frame(height: 10)
+                        .padding(.horizontal)
                     }
-                    .frame(height: 10)
-                    .padding(.horizontal)
+                    .padding(.top, 20)
                 }
-                .padding()
                 
                 Spacer()
                 
