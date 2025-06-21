@@ -19,6 +19,7 @@ struct Focus_FlowApp: App {
     
     // Theme state
     @AppStorage("selectedTheme") private var selectedTheme: Int = 0
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     
     init() {
         // Create the VM with the container's view context
@@ -31,16 +32,23 @@ struct Focus_FlowApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(taskViewModel)
-                .environmentObject(blockingManager)
-                .onAppear {
-                    // Ensure theme is applied when app launches
-                    updateTheme()
-                    
+            Group {
+                if hasSeenOnboarding {
+                    ContentView()
+                } else {
+                    OnboardingView()
+                }
+            }
+            .environmentObject(taskViewModel)
+            .environmentObject(blockingManager)
+            .onAppear {
+                // Ensure theme is applied when app launches
+                updateTheme()
+                if hasSeenOnboarding {
                     // Refresh tasks when app launches
                     taskViewModel.fetchTasks()
                 }
+            }
         }
         .onChange(of: selectedTheme) { newValue in
             updateTheme()
