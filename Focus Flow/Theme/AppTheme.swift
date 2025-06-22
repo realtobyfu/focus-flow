@@ -50,6 +50,8 @@ class AppTheme {
             colors = [Color(hex: "4facfe"), Color(hex: "00f2fe")]
         case .quickSprint:
             colors = [Color(hex: "fa709a"), Color(hex: "fee140")]
+        case .mindfulFocus:
+            colors = [Color(hex: "4ade80"), Color(hex: "38f9d7")]
         }
         
         return LinearGradient(
@@ -61,10 +63,28 @@ class AppTheme {
     
     // MARK: - Semantic Colors
     struct Colors {
-        // Primary colors
-        static let primary = Color(hex: "667eea")
-        static let secondary = Color(hex: "764ba2")
-        static let accent = Color(hex: "00f2fe")
+        // Primary colors (dynamic based on selected theme)
+        static var primary: Color {
+            switch AppTheme.current {
+            case .blue: return Color(hex: "4facfe")    // Blue theme primary
+            case .green: return Color(hex: "43e97b")   // Green theme primary
+            case .purple: return Color(hex: "667eea")  // Purple theme primary
+            }
+        }
+        static var secondary: Color {
+            switch AppTheme.current {
+            case .blue: return Color(hex: "00f2fe")    // Blue theme secondary
+            case .green: return Color(hex: "38f9d7")   // Green theme secondary
+            case .purple: return Color(hex: "764ba2")  // Purple theme secondary
+            }
+        }
+        static var accent: Color {
+            switch AppTheme.current {
+            case .blue: return Color(hex: "00f2fe")     // Blue theme accent
+            case .green: return Color(hex: "38f9d7")   // Green theme accent
+            case .purple: return Color(hex: "f093fb")  // Purple theme accent
+            }
+        }
         
         // Background colors
         static let background = Color(hex: "0a0a0a")
@@ -168,6 +188,9 @@ class AppTheme {
         static let slow = SwiftUI.Animation.easeInOut(duration: 0.8)
         static let spring = SwiftUI.Animation.spring(response: 0.6, dampingFraction: 0.8)
     }
+    
+    /// Font size for timer display in HomeView
+    static let timerDisplay: CGFloat = 64
 }
 
 // MARK: - View Modifiers
@@ -219,6 +242,45 @@ extension View {
             )
         )
         .mask(self)
+    }
+
+    // Add premium glass effect
+    func premiumGlassEffect(
+        intensity: Double = 0.7,
+        cornerRadius: CGFloat = AppTheme.CornerRadius.l
+    ) -> some View {
+        self
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(.ultraThinMaterial)
+                        .opacity(intensity)
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.1),
+                                    Color.clear
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.3),
+                                    Color.white.opacity(0.1)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                }
+            )
+            .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
 }
 
@@ -290,13 +352,25 @@ enum FocusMode: String, CaseIterable {
     case creativeFlow = "Creative Flow"
     case learning = "Learning"
     case quickSprint = "Quick Sprint"
+    case mindfulFocus = "Mindful Focus"
     
+    var ambientSound: String? {
+        switch self {
+        case .deepWork: return "brown_noise"
+        case .creativeFlow: return "rain_forest"
+        case .learning: return "library_ambience"
+        case .mindfulFocus: return "meditation_bells"
+        default: return nil
+        }
+    }
+
     var icon: String {
         switch self {
         case .deepWork: return "brain"
         case .creativeFlow: return "paintbrush.fill"
         case .learning: return "book.fill"
         case .quickSprint: return "bolt.fill"
+        case .mindfulFocus: return "lungs.fill"
         }
     }
     
@@ -306,6 +380,7 @@ enum FocusMode: String, CaseIterable {
         case .creativeFlow: return 45
         case .learning: return 25
         case .quickSprint: return 15
+        case .mindfulFocus: return 20
         }
     }
 }
@@ -351,6 +426,10 @@ extension Color {
     static var themeBackground: Color { AppTheme.Colors.background }
     static var themeTextPrimary: Color { AppTheme.Colors.textPrimary }
     static var themeTextSecondary: Color { AppTheme.Colors.textSecondary }
+    /// Color for timer text in HomeView
+    static var timerText: Color { themeTextPrimary }
+    /// Background color for primary buttons
+    static var buttonBackground: Color { themePrimary }
 }
 
 // MARK: - Haptic Feedback
@@ -375,5 +454,34 @@ enum HapticStyle {
             UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
         #endif
+    }
+}
+
+// MARK: - Theme Selection
+extension AppTheme {
+    enum Preset {
+        case blue, green, purple
+    }
+
+    /// The currently selected theme preset
+    static var current: Preset = .blue
+    /// Blue theme preset
+    static var blue: Preset { .blue }
+    /// Green theme preset
+    static var green: Preset { .green }
+    /// Purple theme preset
+    static var purple: Preset { .purple }
+    /// Alias for large padding
+    static var largePadding: CGFloat { Spacing.l }
+}
+
+// MARK: - Standard Shadow Modifier
+extension View {
+    /// Applies the standard medium shadow from AppTheme
+    func standardShadow() -> some View {
+        self.shadow(color: AppTheme.Shadows.medium.color,
+                    radius: AppTheme.Shadows.medium.radius,
+                    x: AppTheme.Shadows.medium.x,
+                    y: AppTheme.Shadows.medium.y)
     }
 }

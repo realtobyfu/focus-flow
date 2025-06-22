@@ -20,7 +20,7 @@ struct BlockCompletionSheet: View {
             
             // Confetti animation for focus completion
             if currentPhase == .focus && showConfetti {
-                ConfettiView()
+                BlockConfettiView()
                     .edgesIgnoringSafeArea(.all)
                     .allowsHitTesting(false)
             }
@@ -154,7 +154,7 @@ struct StatBox: View {
 
 // MARK: - Confetti View
 
-struct ConfettiView: View {
+struct BlockConfettiView: View {
     @State private var confettiPieces = [ConfettiPiece]()
     
     struct ConfettiPiece: Identifiable {

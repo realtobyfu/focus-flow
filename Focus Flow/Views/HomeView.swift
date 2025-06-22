@@ -29,7 +29,7 @@ struct HomeView: View {
                             .font(.title2)
                             .foregroundColor(blockingManager.isBlockingEnabled ? Color.themePrimary : Color.gray)
                     }
-                    .padding(.trailing, AppTheme.largePadding)
+                    .padding(.trailing, AppTheme.Spacing.l)
                 }
                 Spacer()
                 
@@ -59,7 +59,9 @@ struct HomeView: View {
                 Spacer()
                 
                 // Start button
-                Button(action: createAndStartSession) {
+                Button {
+                    createAndStartSession()
+                } label: {
                     Text("Start Focus")
                         .font(.title3)
                         .fontWeight(.semibold)
@@ -72,7 +74,7 @@ struct HomeView: View {
                         )
                 }
                 .standardShadow()
-                .padding(.bottom, 50)
+                .padding(Edge.Set.bottom, 50)
             }
         }
         .onAppear {
@@ -312,3 +314,4 @@ struct TagButton: View {
 //            .environmentObject(TaskViewModel())
 //    }
 //} 
+
