@@ -7,35 +7,84 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3E32907E2E07B88400F0209F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E3290792E07B88400F0209F /* Assets.xcassets */; };
-		3E32907F2E07B88400F0209F /* AdvancedBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290562E07B88400F0209F /* AdvancedBlockingManager.swift */; };
-		3E3290802E07B88400F0209F /* ScreenTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32905B2E07B88400F0209F /* ScreenTimeManager.swift */; };
-		3E3290812E07B88400F0209F /* FocusEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32905F2E07B88400F0209F /* FocusEntityManager.swift */; };
-		3E3290822E07B88400F0209F /* NetworkBlockingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290592E07B88400F0209F /* NetworkBlockingService.swift */; };
-		3E3290832E07B88400F0209F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290742E07B88400F0209F /* SettingsView.swift */; };
-		3E3290842E07B88400F0209F /* ProductivityGarden.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290602E07B88400F0209F /* ProductivityGarden.swift */; };
-		3E3290852E07B88400F0209F /* Focus_FlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290582E07B88400F0209F /* Focus_FlowApp.swift */; };
-		3E3290862E07B88400F0209F /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290692E07B88400F0209F /* TaskViewModel.swift */; };
-		3E3290872E07B88400F0209F /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290672E07B88400F0209F /* MenuBarManager.swift */; };
-		3E3290882E07B88400F0209F /* AppBlockingSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290702E07B88400F0209F /* AppBlockingSettingsView.swift */; };
-		3E3290892E07B88400F0209F /* Focus_Flow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3E32907B2E07B88400F0209F /* Focus_Flow.xcdatamodeld */; };
-		3E32908A2E07B88400F0209F /* FocusFlowWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290772E07B88400F0209F /* FocusFlowWidget.swift */; };
-		3E32908B2E07B88400F0209F /* EnvironmentalTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290632E07B88400F0209F /* EnvironmentalTheme.swift */; };
-		3E32908C2E07B88400F0209F /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290752E07B88400F0209F /* TimerView.swift */; };
-		3E32908D2E07B88400F0209F /* ConfigureFocusModeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32905D2E07B88400F0209F /* ConfigureFocusModeIntent.swift */; };
-		3E32908E2E07B88400F0209F /* AISessionRecommender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290652E07B88400F0209F /* AISessionRecommender.swift */; };
-		3E32908F2E07B88400F0209F /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32905A2E07B88400F0209F /* Persistence.swift */; };
-		3E3290902E07B88400F0209F /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290722E07B88400F0209F /* HomeView.swift */; };
-		3E3290912E07B88400F0209F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290712E07B88400F0209F /* ContentView.swift */; };
-		3E3290922E07B88400F0209F /* FocusEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32905E2E07B88400F0209F /* FocusEntity.swift */; };
-		3E3290932E07B88400F0209F /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290622E07B88400F0209F /* AppTheme.swift */; };
-		3E3290942E07B88400F0209F /* TabBarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32906C2E07B88400F0209F /* TabBarButton.swift */; };
-		3E3290952E07B88400F0209F /* BlockCompletionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290662E07B88400F0209F /* BlockCompletionSheet.swift */; };
-		3E3290962E07B88400F0209F /* WeeklyProgressChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32906D2E07B88400F0209F /* WeeklyProgressChart.swift */; };
-		3E3290972E07B88400F0209F /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32906F2E07B88400F0209F /* AddTaskView.swift */; };
-		3E3290982E07B88400F0209F /* AppBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290572E07B88400F0209F /* AppBlockingManager.swift */; };
-		3E3290992E07B88400F0209F /* StatisticCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E32906B2E07B88400F0209F /* StatisticCard.swift */; };
-		3E32909A2E07B88400F0209F /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3290732E07B88400F0209F /* Onboarding.swift */; };
+		3EA0122D2E0A585C00EF978E /* TabBarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012182E0A585C00EF978E /* TabBarButton.swift */; };
+		3EA0122E2E0A585C00EF978E /* StatisticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012072E0A585C00EF978E /* StatisticsManager.swift */; };
+		3EA0122F2E0A585C00EF978E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0121F2E0A585C00EF978E /* HomeView.swift */; };
+		3EA012302E0A585C00EF978E /* AISessionRecommender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012112E0A585C00EF978E /* AISessionRecommender.swift */; };
+		3EA012312E0A585C00EF978E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0121D2E0A585C00EF978E /* ContentView.swift */; };
+		3EA012322E0A585C00EF978E /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012032E0A585C00EF978E /* Persistence.swift */; };
+		3EA012332E0A585C00EF978E /* ProductivityGarden.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0120C2E0A585C00EF978E /* ProductivityGarden.swift */; };
+		3EA012342E0A585C00EF978E /* FocusWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012262E0A585C00EF978E /* FocusWidget.swift */; };
+		3EA012352E0A585C00EF978E /* AdvancedAppBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA011FB2E0A585C00EF978E /* AdvancedAppBlockingManager.swift */; };
+		3EA012362E0A585C00EF978E /* AISessionRecommender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA011FD2E0A585C00EF978E /* AISessionRecommender.swift */; };
+		3EA012372E0A585C00EF978E /* FocusEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0120A2E0A585C00EF978E /* FocusEntity.swift */; };
+		3EA012382E0A585C00EF978E /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012152E0A585C00EF978E /* TaskViewModel.swift */; };
+		3EA012392E0A585C00EF978E /* AdvancedBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA011FC2E0A585C00EF978E /* AdvancedBlockingManager.swift */; };
+		3EA0123A2E0A585C00EF978E /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0120E2E0A585C00EF978E /* AppTheme.swift */; };
+		3EA0123B2E0A585C00EF978E /* EnvironmentalTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0120F2E0A585C00EF978E /* EnvironmentalTheme.swift */; };
+		3EA0123C2E0A585C00EF978E /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012232E0A585C00EF978E /* TimerView.swift */; };
+		3EA0123D2E0A585C00EF978E /* AmbientSoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA011FE2E0A585C00EF978E /* AmbientSoundManager.swift */; };
+		3EA0123E2E0A585C00EF978E /* BlockCompletionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012122E0A585C00EF978E /* BlockCompletionSheet.swift */; };
+		3EA0123F2E0A585C00EF978E /* Focus_Flow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0122A2E0A585C00EF978E /* Focus_Flow.xcdatamodeld */; };
+		3EA012402E0A585C00EF978E /* Focus_FlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012012E0A585C00EF978E /* Focus_FlowApp.swift */; };
+		3EA012412E0A585C00EF978E /* WeeklyProgressChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012192E0A585C00EF978E /* WeeklyProgressChart.swift */; };
+		3EA012422E0A585C00EF978E /* AppBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA011FF2E0A585C00EF978E /* AppBlockingManager.swift */; };
+		3EA012432E0A585C00EF978E /* FocusFlowWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012252E0A585C00EF978E /* FocusFlowWidget.swift */; };
+		3EA012442E0A585C00EF978E /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0121B2E0A585C00EF978E /* AddTaskView.swift */; };
+		3EA012452E0A585C00EF978E /* ProductivityGardenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012052E0A585C00EF978E /* ProductivityGardenManager.swift */; };
+		3EA012462E0A585C00EF978E /* PremiumStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012042E0A585C00EF978E /* PremiumStore.swift */; };
+		3EA012472E0A585C00EF978E /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012132E0A585C00EF978E /* MenuBarManager.swift */; };
+		3EA012482E0A585C00EF978E /* EnvironmentalThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012002E0A585C00EF978E /* EnvironmentalThemeManager.swift */; };
+		3EA012492E0A585C00EF978E /* ParticleEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012212E0A585C00EF978E /* ParticleEffectView.swift */; };
+		3EA0124A2E0A585C00EF978E /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012202E0A585C00EF978E /* Onboarding.swift */; };
+		3EA0124B2E0A585C00EF978E /* FocusEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0120B2E0A585C00EF978E /* FocusEntityManager.swift */; };
+		3EA0124C2E0A585C00EF978E /* EnvironmentalBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0121E2E0A585C00EF978E /* EnvironmentalBackground.swift */; };
+		3EA0124D2E0A585C00EF978E /* ScreenTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012062E0A585C00EF978E /* ScreenTimeManager.swift */; };
+		3EA0124E2E0A585C00EF978E /* ConfigureFocusModeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012092E0A585C00EF978E /* ConfigureFocusModeIntent.swift */; };
+		3EA0124F2E0A585C00EF978E /* AppBlockingSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0121C2E0A585C00EF978E /* AppBlockingSettingsView.swift */; };
+		3EA012502E0A585C00EF978E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012222E0A585C00EF978E /* SettingsView.swift */; };
+		3EA012512E0A585C00EF978E /* StatisticCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012172E0A585C00EF978E /* StatisticCard.swift */; };
+		3EA012522E0A585C00EF978E /* NetworkBlockingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012022E0A585C00EF978E /* NetworkBlockingService.swift */; };
+		3EA012532E0A585C00EF978E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3EA012282E0A585C00EF978E /* Assets.xcassets */; };
+		3EA012862E0A586600EF978E /* EnvironmentalBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012772E0A586600EF978E /* EnvironmentalBackground.swift */; };
+		3EA012872E0A586600EF978E /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012672E0A586600EF978E /* AppTheme.swift */; };
+		3EA012882E0A586600EF978E /* WeeklyProgressChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012722E0A586600EF978E /* WeeklyProgressChart.swift */; };
+		3EA012892E0A586600EF978E /* FocusWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0127F2E0A586600EF978E /* FocusWidget.swift */; };
+		3EA0128A2E0A586600EF978E /* EnvironmentalThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012592E0A586600EF978E /* EnvironmentalThemeManager.swift */; };
+		3EA0128B2E0A586600EF978E /* FocusEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012642E0A586600EF978E /* FocusEntityManager.swift */; };
+		3EA0128C2E0A586600EF978E /* FocusFlowWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0127E2E0A586600EF978E /* FocusFlowWidget.swift */; };
+		3EA0128D2E0A586600EF978E /* StatisticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012602E0A586600EF978E /* StatisticsManager.swift */; };
+		3EA0128E2E0A586600EF978E /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0126E2E0A586600EF978E /* TaskViewModel.swift */; };
+		3EA0128F2E0A586600EF978E /* ProductivityGardenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0125E2E0A586600EF978E /* ProductivityGardenManager.swift */; };
+		3EA012902E0A586600EF978E /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0126C2E0A586600EF978E /* MenuBarManager.swift */; };
+		3EA012912E0A586600EF978E /* AdvancedBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012552E0A586600EF978E /* AdvancedBlockingManager.swift */; };
+		3EA012922E0A586600EF978E /* AmbientSoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012572E0A586600EF978E /* AmbientSoundManager.swift */; };
+		3EA012932E0A586600EF978E /* ProductivityGarden.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012652E0A586600EF978E /* ProductivityGarden.swift */; };
+		3EA012942E0A586600EF978E /* Focus_FlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0125A2E0A586600EF978E /* Focus_FlowApp.swift */; };
+		3EA012952E0A586600EF978E /* BlockCompletionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0126B2E0A586600EF978E /* BlockCompletionSheet.swift */; };
+		3EA012962E0A586600EF978E /* AISessionRecommender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0126A2E0A586600EF978E /* AISessionRecommender.swift */; };
+		3EA012972E0A586600EF978E /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012792E0A586600EF978E /* Onboarding.swift */; };
+		3EA012982E0A586600EF978E /* StatisticCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012702E0A586600EF978E /* StatisticCard.swift */; };
+		3EA012992E0A586600EF978E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012782E0A586600EF978E /* HomeView.swift */; };
+		3EA0129A2E0A586600EF978E /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0127C2E0A586600EF978E /* TimerView.swift */; };
+		3EA0129B2E0A586600EF978E /* AppBlockingSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012752E0A586600EF978E /* AppBlockingSettingsView.swift */; };
+		3EA0129C2E0A586600EF978E /* FocusEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012632E0A586600EF978E /* FocusEntity.swift */; };
+		3EA0129D2E0A586600EF978E /* ConfigureFocusModeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012622E0A586600EF978E /* ConfigureFocusModeIntent.swift */; };
+		3EA0129E2E0A586600EF978E /* ScreenTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0125F2E0A586600EF978E /* ScreenTimeManager.swift */; };
+		3EA0129F2E0A586600EF978E /* AppBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012582E0A586600EF978E /* AppBlockingManager.swift */; };
+		3EA012A02E0A586600EF978E /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0125C2E0A586600EF978E /* Persistence.swift */; };
+		3EA012A12E0A586600EF978E /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012742E0A586600EF978E /* AddTaskView.swift */; };
+		3EA012A22E0A586600EF978E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0127B2E0A586600EF978E /* SettingsView.swift */; };
+		3EA012A32E0A586600EF978E /* TabBarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012712E0A586600EF978E /* TabBarButton.swift */; };
+		3EA012A42E0A586600EF978E /* AISessionRecommender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012562E0A586600EF978E /* AISessionRecommender.swift */; };
+		3EA012A52E0A586600EF978E /* ParticleEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0127A2E0A586600EF978E /* ParticleEffectView.swift */; };
+		3EA012A62E0A586600EF978E /* PremiumStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0125D2E0A586600EF978E /* PremiumStore.swift */; };
+		3EA012A72E0A586600EF978E /* EnvironmentalTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012682E0A586600EF978E /* EnvironmentalTheme.swift */; };
+		3EA012A82E0A586600EF978E /* NetworkBlockingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA0125B2E0A586600EF978E /* NetworkBlockingService.swift */; };
+		3EA012A92E0A586600EF978E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012762E0A586600EF978E /* ContentView.swift */; };
+		3EA012AA2E0A586600EF978E /* AdvancedAppBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012542E0A586600EF978E /* AdvancedAppBlockingManager.swift */; };
+		3EA012AB2E0A586600EF978E /* Focus_Flow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3EA012832E0A586600EF978E /* Focus_Flow.xcdatamodeld */; };
+		3EA012AC2E0A586600EF978E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3EA012812E0A586600EF978E /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,36 +105,86 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3E3290562E07B88400F0209F /* AdvancedBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedBlockingManager.swift; sourceTree = "<group>"; };
-		3E3290572E07B88400F0209F /* AppBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBlockingManager.swift; sourceTree = "<group>"; };
-		3E3290582E07B88400F0209F /* Focus_FlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Focus_FlowApp.swift; sourceTree = "<group>"; };
-		3E3290592E07B88400F0209F /* NetworkBlockingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkBlockingService.swift; sourceTree = "<group>"; };
-		3E32905A2E07B88400F0209F /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
-		3E32905B2E07B88400F0209F /* ScreenTimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeManager.swift; sourceTree = "<group>"; };
-		3E32905D2E07B88400F0209F /* ConfigureFocusModeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureFocusModeIntent.swift; sourceTree = "<group>"; };
-		3E32905E2E07B88400F0209F /* FocusEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusEntity.swift; sourceTree = "<group>"; };
-		3E32905F2E07B88400F0209F /* FocusEntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusEntityManager.swift; sourceTree = "<group>"; };
-		3E3290602E07B88400F0209F /* ProductivityGarden.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductivityGarden.swift; sourceTree = "<group>"; };
-		3E3290622E07B88400F0209F /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
-		3E3290632E07B88400F0209F /* EnvironmentalTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentalTheme.swift; sourceTree = "<group>"; };
-		3E3290652E07B88400F0209F /* AISessionRecommender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISessionRecommender.swift; sourceTree = "<group>"; };
-		3E3290662E07B88400F0209F /* BlockCompletionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCompletionSheet.swift; sourceTree = "<group>"; };
-		3E3290672E07B88400F0209F /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarManager.swift; sourceTree = "<group>"; };
-		3E3290692E07B88400F0209F /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
-		3E32906B2E07B88400F0209F /* StatisticCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticCard.swift; sourceTree = "<group>"; };
-		3E32906C2E07B88400F0209F /* TabBarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarButton.swift; sourceTree = "<group>"; };
-		3E32906D2E07B88400F0209F /* WeeklyProgressChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyProgressChart.swift; sourceTree = "<group>"; };
-		3E32906F2E07B88400F0209F /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
-		3E3290702E07B88400F0209F /* AppBlockingSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBlockingSettingsView.swift; sourceTree = "<group>"; };
-		3E3290712E07B88400F0209F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		3E3290722E07B88400F0209F /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		3E3290732E07B88400F0209F /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
-		3E3290742E07B88400F0209F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		3E3290752E07B88400F0209F /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
-		3E3290772E07B88400F0209F /* FocusFlowWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusFlowWidget.swift; sourceTree = "<group>"; };
-		3E3290792E07B88400F0209F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		3E32907A2E07B88400F0209F /* Focus_Flow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Focus_Flow.entitlements; sourceTree = "<group>"; };
-		3E32907D2E07B88400F0209F /* Focus_Flow.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Focus_Flow.xcdatamodel; sourceTree = "<group>"; };
+		3EA011FB2E0A585C00EF978E /* AdvancedAppBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedAppBlockingManager.swift; sourceTree = "<group>"; };
+		3EA011FC2E0A585C00EF978E /* AdvancedBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedBlockingManager.swift; sourceTree = "<group>"; };
+		3EA011FD2E0A585C00EF978E /* AISessionRecommender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISessionRecommender.swift; sourceTree = "<group>"; };
+		3EA011FE2E0A585C00EF978E /* AmbientSoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbientSoundManager.swift; sourceTree = "<group>"; };
+		3EA011FF2E0A585C00EF978E /* AppBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBlockingManager.swift; sourceTree = "<group>"; };
+		3EA012002E0A585C00EF978E /* EnvironmentalThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentalThemeManager.swift; sourceTree = "<group>"; };
+		3EA012012E0A585C00EF978E /* Focus_FlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Focus_FlowApp.swift; sourceTree = "<group>"; };
+		3EA012022E0A585C00EF978E /* NetworkBlockingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkBlockingService.swift; sourceTree = "<group>"; };
+		3EA012032E0A585C00EF978E /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		3EA012042E0A585C00EF978E /* PremiumStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumStore.swift; sourceTree = "<group>"; };
+		3EA012052E0A585C00EF978E /* ProductivityGardenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductivityGardenManager.swift; sourceTree = "<group>"; };
+		3EA012062E0A585C00EF978E /* ScreenTimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeManager.swift; sourceTree = "<group>"; };
+		3EA012072E0A585C00EF978E /* StatisticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsManager.swift; sourceTree = "<group>"; };
+		3EA012092E0A585C00EF978E /* ConfigureFocusModeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureFocusModeIntent.swift; sourceTree = "<group>"; };
+		3EA0120A2E0A585C00EF978E /* FocusEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusEntity.swift; sourceTree = "<group>"; };
+		3EA0120B2E0A585C00EF978E /* FocusEntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusEntityManager.swift; sourceTree = "<group>"; };
+		3EA0120C2E0A585C00EF978E /* ProductivityGarden.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductivityGarden.swift; sourceTree = "<group>"; };
+		3EA0120E2E0A585C00EF978E /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		3EA0120F2E0A585C00EF978E /* EnvironmentalTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentalTheme.swift; sourceTree = "<group>"; };
+		3EA012112E0A585C00EF978E /* AISessionRecommender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISessionRecommender.swift; sourceTree = "<group>"; };
+		3EA012122E0A585C00EF978E /* BlockCompletionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCompletionSheet.swift; sourceTree = "<group>"; };
+		3EA012132E0A585C00EF978E /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarManager.swift; sourceTree = "<group>"; };
+		3EA012152E0A585C00EF978E /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
+		3EA012172E0A585C00EF978E /* StatisticCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticCard.swift; sourceTree = "<group>"; };
+		3EA012182E0A585C00EF978E /* TabBarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarButton.swift; sourceTree = "<group>"; };
+		3EA012192E0A585C00EF978E /* WeeklyProgressChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyProgressChart.swift; sourceTree = "<group>"; };
+		3EA0121B2E0A585C00EF978E /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
+		3EA0121C2E0A585C00EF978E /* AppBlockingSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBlockingSettingsView.swift; sourceTree = "<group>"; };
+		3EA0121D2E0A585C00EF978E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3EA0121E2E0A585C00EF978E /* EnvironmentalBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentalBackground.swift; sourceTree = "<group>"; };
+		3EA0121F2E0A585C00EF978E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		3EA012202E0A585C00EF978E /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
+		3EA012212E0A585C00EF978E /* ParticleEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffectView.swift; sourceTree = "<group>"; };
+		3EA012222E0A585C00EF978E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		3EA012232E0A585C00EF978E /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
+		3EA012252E0A585C00EF978E /* FocusFlowWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusFlowWidget.swift; sourceTree = "<group>"; };
+		3EA012262E0A585C00EF978E /* FocusWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusWidget.swift; sourceTree = "<group>"; };
+		3EA012282E0A585C00EF978E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3EA012292E0A585C00EF978E /* Focus_Flow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Focus_Flow.entitlements; sourceTree = "<group>"; };
+		3EA0122C2E0A585C00EF978E /* Focus_Flow.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Focus_Flow.xcdatamodel; sourceTree = "<group>"; };
+		3EA012542E0A586600EF978E /* AdvancedAppBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedAppBlockingManager.swift; sourceTree = "<group>"; };
+		3EA012552E0A586600EF978E /* AdvancedBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedBlockingManager.swift; sourceTree = "<group>"; };
+		3EA012562E0A586600EF978E /* AISessionRecommender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISessionRecommender.swift; sourceTree = "<group>"; };
+		3EA012572E0A586600EF978E /* AmbientSoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbientSoundManager.swift; sourceTree = "<group>"; };
+		3EA012582E0A586600EF978E /* AppBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBlockingManager.swift; sourceTree = "<group>"; };
+		3EA012592E0A586600EF978E /* EnvironmentalThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentalThemeManager.swift; sourceTree = "<group>"; };
+		3EA0125A2E0A586600EF978E /* Focus_FlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Focus_FlowApp.swift; sourceTree = "<group>"; };
+		3EA0125B2E0A586600EF978E /* NetworkBlockingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkBlockingService.swift; sourceTree = "<group>"; };
+		3EA0125C2E0A586600EF978E /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		3EA0125D2E0A586600EF978E /* PremiumStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumStore.swift; sourceTree = "<group>"; };
+		3EA0125E2E0A586600EF978E /* ProductivityGardenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductivityGardenManager.swift; sourceTree = "<group>"; };
+		3EA0125F2E0A586600EF978E /* ScreenTimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeManager.swift; sourceTree = "<group>"; };
+		3EA012602E0A586600EF978E /* StatisticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsManager.swift; sourceTree = "<group>"; };
+		3EA012622E0A586600EF978E /* ConfigureFocusModeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureFocusModeIntent.swift; sourceTree = "<group>"; };
+		3EA012632E0A586600EF978E /* FocusEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusEntity.swift; sourceTree = "<group>"; };
+		3EA012642E0A586600EF978E /* FocusEntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusEntityManager.swift; sourceTree = "<group>"; };
+		3EA012652E0A586600EF978E /* ProductivityGarden.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductivityGarden.swift; sourceTree = "<group>"; };
+		3EA012672E0A586600EF978E /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		3EA012682E0A586600EF978E /* EnvironmentalTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentalTheme.swift; sourceTree = "<group>"; };
+		3EA0126A2E0A586600EF978E /* AISessionRecommender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISessionRecommender.swift; sourceTree = "<group>"; };
+		3EA0126B2E0A586600EF978E /* BlockCompletionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCompletionSheet.swift; sourceTree = "<group>"; };
+		3EA0126C2E0A586600EF978E /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarManager.swift; sourceTree = "<group>"; };
+		3EA0126E2E0A586600EF978E /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
+		3EA012702E0A586600EF978E /* StatisticCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticCard.swift; sourceTree = "<group>"; };
+		3EA012712E0A586600EF978E /* TabBarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarButton.swift; sourceTree = "<group>"; };
+		3EA012722E0A586600EF978E /* WeeklyProgressChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyProgressChart.swift; sourceTree = "<group>"; };
+		3EA012742E0A586600EF978E /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
+		3EA012752E0A586600EF978E /* AppBlockingSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBlockingSettingsView.swift; sourceTree = "<group>"; };
+		3EA012762E0A586600EF978E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3EA012772E0A586600EF978E /* EnvironmentalBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentalBackground.swift; sourceTree = "<group>"; };
+		3EA012782E0A586600EF978E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		3EA012792E0A586600EF978E /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
+		3EA0127A2E0A586600EF978E /* ParticleEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffectView.swift; sourceTree = "<group>"; };
+		3EA0127B2E0A586600EF978E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		3EA0127C2E0A586600EF978E /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
+		3EA0127E2E0A586600EF978E /* FocusFlowWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusFlowWidget.swift; sourceTree = "<group>"; };
+		3EA0127F2E0A586600EF978E /* FocusWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusWidget.swift; sourceTree = "<group>"; };
+		3EA012812E0A586600EF978E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3EA012822E0A586600EF978E /* Focus_Flow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Focus_Flow.entitlements; sourceTree = "<group>"; };
+		3EA012852E0A586600EF978E /* Focus_Flow.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Focus_Flow.xcdatamodel; sourceTree = "<group>"; };
 		3EB61F9D2D74D2C200B69DB7 /* Focus Flow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Focus Flow.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EB61FB32D74D2C600B69DB7 /* Focus FlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Focus FlowTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EB61FBD2D74D2C600B69DB7 /* Focus FlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Focus FlowUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -129,103 +228,225 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3E32905C2E07B88400F0209F /* Core */ = {
+		3EA012082E0A585C00EF978E /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				3E3290562E07B88400F0209F /* AdvancedBlockingManager.swift */,
-				3E3290572E07B88400F0209F /* AppBlockingManager.swift */,
-				3E3290582E07B88400F0209F /* Focus_FlowApp.swift */,
-				3E3290592E07B88400F0209F /* NetworkBlockingService.swift */,
-				3E32905A2E07B88400F0209F /* Persistence.swift */,
-				3E32905B2E07B88400F0209F /* ScreenTimeManager.swift */,
+				3EA011FB2E0A585C00EF978E /* AdvancedAppBlockingManager.swift */,
+				3EA011FC2E0A585C00EF978E /* AdvancedBlockingManager.swift */,
+				3EA011FD2E0A585C00EF978E /* AISessionRecommender.swift */,
+				3EA011FE2E0A585C00EF978E /* AmbientSoundManager.swift */,
+				3EA011FF2E0A585C00EF978E /* AppBlockingManager.swift */,
+				3EA012002E0A585C00EF978E /* EnvironmentalThemeManager.swift */,
+				3EA012012E0A585C00EF978E /* Focus_FlowApp.swift */,
+				3EA012022E0A585C00EF978E /* NetworkBlockingService.swift */,
+				3EA012032E0A585C00EF978E /* Persistence.swift */,
+				3EA012042E0A585C00EF978E /* PremiumStore.swift */,
+				3EA012052E0A585C00EF978E /* ProductivityGardenManager.swift */,
+				3EA012062E0A585C00EF978E /* ScreenTimeManager.swift */,
+				3EA012072E0A585C00EF978E /* StatisticsManager.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
 		};
-		3E3290612E07B88400F0209F /* Models */ = {
+		3EA0120D2E0A585C00EF978E /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				3E32905D2E07B88400F0209F /* ConfigureFocusModeIntent.swift */,
-				3E32905E2E07B88400F0209F /* FocusEntity.swift */,
-				3E32905F2E07B88400F0209F /* FocusEntityManager.swift */,
-				3E3290602E07B88400F0209F /* ProductivityGarden.swift */,
+				3EA012092E0A585C00EF978E /* ConfigureFocusModeIntent.swift */,
+				3EA0120A2E0A585C00EF978E /* FocusEntity.swift */,
+				3EA0120B2E0A585C00EF978E /* FocusEntityManager.swift */,
+				3EA0120C2E0A585C00EF978E /* ProductivityGarden.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
 		};
-		3E3290642E07B88400F0209F /* Theme */ = {
+		3EA012102E0A585C00EF978E /* Theme */ = {
 			isa = PBXGroup;
 			children = (
-				3E3290622E07B88400F0209F /* AppTheme.swift */,
-				3E3290632E07B88400F0209F /* EnvironmentalTheme.swift */,
+				3EA0120E2E0A585C00EF978E /* AppTheme.swift */,
+				3EA0120F2E0A585C00EF978E /* EnvironmentalTheme.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
 		};
-		3E3290682E07B88400F0209F /* Utils */ = {
+		3EA012142E0A585C00EF978E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				3E3290652E07B88400F0209F /* AISessionRecommender.swift */,
-				3E3290662E07B88400F0209F /* BlockCompletionSheet.swift */,
-				3E3290672E07B88400F0209F /* MenuBarManager.swift */,
+				3EA012112E0A585C00EF978E /* AISessionRecommender.swift */,
+				3EA012122E0A585C00EF978E /* BlockCompletionSheet.swift */,
+				3EA012132E0A585C00EF978E /* MenuBarManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		3E32906A2E07B88400F0209F /* ViewModels */ = {
+		3EA012162E0A585C00EF978E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				3E3290692E07B88400F0209F /* TaskViewModel.swift */,
+				3EA012152E0A585C00EF978E /* TaskViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		3E32906E2E07B88400F0209F /* Components */ = {
+		3EA0121A2E0A585C00EF978E /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				3E32906B2E07B88400F0209F /* StatisticCard.swift */,
-				3E32906C2E07B88400F0209F /* TabBarButton.swift */,
-				3E32906D2E07B88400F0209F /* WeeklyProgressChart.swift */,
+				3EA012172E0A585C00EF978E /* StatisticCard.swift */,
+				3EA012182E0A585C00EF978E /* TabBarButton.swift */,
+				3EA012192E0A585C00EF978E /* WeeklyProgressChart.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
 		};
-		3E3290762E07B88400F0209F /* Views */ = {
+		3EA012242E0A585C00EF978E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				3E32906E2E07B88400F0209F /* Components */,
-				3E32906F2E07B88400F0209F /* AddTaskView.swift */,
-				3E3290702E07B88400F0209F /* AppBlockingSettingsView.swift */,
-				3E3290712E07B88400F0209F /* ContentView.swift */,
-				3E3290722E07B88400F0209F /* HomeView.swift */,
-				3E3290732E07B88400F0209F /* Onboarding.swift */,
-				3E3290742E07B88400F0209F /* SettingsView.swift */,
-				3E3290752E07B88400F0209F /* TimerView.swift */,
+				3EA0121A2E0A585C00EF978E /* Components */,
+				3EA0121B2E0A585C00EF978E /* AddTaskView.swift */,
+				3EA0121C2E0A585C00EF978E /* AppBlockingSettingsView.swift */,
+				3EA0121D2E0A585C00EF978E /* ContentView.swift */,
+				3EA0121E2E0A585C00EF978E /* EnvironmentalBackground.swift */,
+				3EA0121F2E0A585C00EF978E /* HomeView.swift */,
+				3EA012202E0A585C00EF978E /* Onboarding.swift */,
+				3EA012212E0A585C00EF978E /* ParticleEffectView.swift */,
+				3EA012222E0A585C00EF978E /* SettingsView.swift */,
+				3EA012232E0A585C00EF978E /* TimerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		3E3290782E07B88400F0209F /* Widgets */ = {
+		3EA012272E0A585C00EF978E /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
-				3E3290772E07B88400F0209F /* FocusFlowWidget.swift */,
+				3EA012252E0A585C00EF978E /* FocusFlowWidget.swift */,
+				3EA012262E0A585C00EF978E /* FocusWidget.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
 		};
-		3E32907C2E07B88400F0209F /* Focus Flow */ = {
+		3EA0122B2E0A585C00EF978E /* Focus Flow */ = {
 			isa = PBXGroup;
 			children = (
-				3E32905C2E07B88400F0209F /* Core */,
-				3E3290612E07B88400F0209F /* Models */,
-				3E3290642E07B88400F0209F /* Theme */,
-				3E3290682E07B88400F0209F /* Utils */,
-				3E32906A2E07B88400F0209F /* ViewModels */,
-				3E3290762E07B88400F0209F /* Views */,
-				3E3290782E07B88400F0209F /* Widgets */,
-				3E3290792E07B88400F0209F /* Assets.xcassets */,
-				3E32907A2E07B88400F0209F /* Focus_Flow.entitlements */,
-				3E32907B2E07B88400F0209F /* Focus_Flow.xcdatamodeld */,
+				3EA012842E0A586600EF978E /* Focus Flow */,
+				3EA012082E0A585C00EF978E /* Core */,
+				3EA0120D2E0A585C00EF978E /* Models */,
+				3EA012102E0A585C00EF978E /* Theme */,
+				3EA012142E0A585C00EF978E /* Utils */,
+				3EA012162E0A585C00EF978E /* ViewModels */,
+				3EA012242E0A585C00EF978E /* Views */,
+				3EA012272E0A585C00EF978E /* Widgets */,
+				3EA012282E0A585C00EF978E /* Assets.xcassets */,
+				3EA012292E0A585C00EF978E /* Focus_Flow.entitlements */,
+				3EA0122A2E0A585C00EF978E /* Focus_Flow.xcdatamodeld */,
+			);
+			path = "Focus Flow";
+			sourceTree = "<group>";
+		};
+		3EA012612E0A586600EF978E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				3EA012542E0A586600EF978E /* AdvancedAppBlockingManager.swift */,
+				3EA012552E0A586600EF978E /* AdvancedBlockingManager.swift */,
+				3EA012562E0A586600EF978E /* AISessionRecommender.swift */,
+				3EA012572E0A586600EF978E /* AmbientSoundManager.swift */,
+				3EA012582E0A586600EF978E /* AppBlockingManager.swift */,
+				3EA012592E0A586600EF978E /* EnvironmentalThemeManager.swift */,
+				3EA0125A2E0A586600EF978E /* Focus_FlowApp.swift */,
+				3EA0125B2E0A586600EF978E /* NetworkBlockingService.swift */,
+				3EA0125C2E0A586600EF978E /* Persistence.swift */,
+				3EA0125D2E0A586600EF978E /* PremiumStore.swift */,
+				3EA0125E2E0A586600EF978E /* ProductivityGardenManager.swift */,
+				3EA0125F2E0A586600EF978E /* ScreenTimeManager.swift */,
+				3EA012602E0A586600EF978E /* StatisticsManager.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		3EA012662E0A586600EF978E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3EA012622E0A586600EF978E /* ConfigureFocusModeIntent.swift */,
+				3EA012632E0A586600EF978E /* FocusEntity.swift */,
+				3EA012642E0A586600EF978E /* FocusEntityManager.swift */,
+				3EA012652E0A586600EF978E /* ProductivityGarden.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		3EA012692E0A586600EF978E /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				3EA012672E0A586600EF978E /* AppTheme.swift */,
+				3EA012682E0A586600EF978E /* EnvironmentalTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		3EA0126D2E0A586600EF978E /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				3EA0126A2E0A586600EF978E /* AISessionRecommender.swift */,
+				3EA0126B2E0A586600EF978E /* BlockCompletionSheet.swift */,
+				3EA0126C2E0A586600EF978E /* MenuBarManager.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		3EA0126F2E0A586600EF978E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				3EA0126E2E0A586600EF978E /* TaskViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3EA012732E0A586600EF978E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				3EA012702E0A586600EF978E /* StatisticCard.swift */,
+				3EA012712E0A586600EF978E /* TabBarButton.swift */,
+				3EA012722E0A586600EF978E /* WeeklyProgressChart.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		3EA0127D2E0A586600EF978E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3EA012732E0A586600EF978E /* Components */,
+				3EA012742E0A586600EF978E /* AddTaskView.swift */,
+				3EA012752E0A586600EF978E /* AppBlockingSettingsView.swift */,
+				3EA012762E0A586600EF978E /* ContentView.swift */,
+				3EA012772E0A586600EF978E /* EnvironmentalBackground.swift */,
+				3EA012782E0A586600EF978E /* HomeView.swift */,
+				3EA012792E0A586600EF978E /* Onboarding.swift */,
+				3EA0127A2E0A586600EF978E /* ParticleEffectView.swift */,
+				3EA0127B2E0A586600EF978E /* SettingsView.swift */,
+				3EA0127C2E0A586600EF978E /* TimerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		3EA012802E0A586600EF978E /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				3EA0127E2E0A586600EF978E /* FocusFlowWidget.swift */,
+				3EA0127F2E0A586600EF978E /* FocusWidget.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		3EA012842E0A586600EF978E /* Focus Flow */ = {
+			isa = PBXGroup;
+			children = (
+				3EA012612E0A586600EF978E /* Core */,
+				3EA012662E0A586600EF978E /* Models */,
+				3EA012692E0A586600EF978E /* Theme */,
+				3EA0126D2E0A586600EF978E /* Utils */,
+				3EA0126F2E0A586600EF978E /* ViewModels */,
+				3EA0127D2E0A586600EF978E /* Views */,
+				3EA012802E0A586600EF978E /* Widgets */,
+				3EA012812E0A586600EF978E /* Assets.xcassets */,
+				3EA012822E0A586600EF978E /* Focus_Flow.entitlements */,
+				3EA012832E0A586600EF978E /* Focus_Flow.xcdatamodeld */,
 			);
 			path = "Focus Flow";
 			sourceTree = "<group>";
@@ -236,7 +457,7 @@
 				3EB61FB62D74D2C600B69DB7 /* Focus FlowTests */,
 				3EB61FC02D74D2C600B69DB7 /* Focus FlowUITests */,
 				3EB61F9E2D74D2C200B69DB7 /* Products */,
-				3E32907C2E07B88400F0209F /* Focus Flow */,
+				3EA0122B2E0A585C00EF978E /* Focus Flow */,
 			);
 			sourceTree = "<group>";
 		};
@@ -367,7 +588,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E32907E2E07B88400F0209F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +595,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3EA012AC2E0A586600EF978E /* Assets.xcassets in Resources */,
+				3EA012532E0A585C00EF978E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,34 +614,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E32907F2E07B88400F0209F /* AdvancedBlockingManager.swift in Sources */,
-				3E3290802E07B88400F0209F /* ScreenTimeManager.swift in Sources */,
-				3E3290812E07B88400F0209F /* FocusEntityManager.swift in Sources */,
-				3E3290822E07B88400F0209F /* NetworkBlockingService.swift in Sources */,
-				3E3290832E07B88400F0209F /* SettingsView.swift in Sources */,
-				3E3290842E07B88400F0209F /* ProductivityGarden.swift in Sources */,
-				3E3290852E07B88400F0209F /* Focus_FlowApp.swift in Sources */,
-				3E3290862E07B88400F0209F /* TaskViewModel.swift in Sources */,
-				3E3290872E07B88400F0209F /* MenuBarManager.swift in Sources */,
-				3E3290882E07B88400F0209F /* AppBlockingSettingsView.swift in Sources */,
-				3E3290892E07B88400F0209F /* Focus_Flow.xcdatamodeld in Sources */,
-				3E32908A2E07B88400F0209F /* FocusFlowWidget.swift in Sources */,
-				3E32908B2E07B88400F0209F /* EnvironmentalTheme.swift in Sources */,
-				3E32908C2E07B88400F0209F /* TimerView.swift in Sources */,
-				3E32908D2E07B88400F0209F /* ConfigureFocusModeIntent.swift in Sources */,
-				3E32908E2E07B88400F0209F /* AISessionRecommender.swift in Sources */,
-				3E32908F2E07B88400F0209F /* Persistence.swift in Sources */,
-				3E3290902E07B88400F0209F /* HomeView.swift in Sources */,
-				3E3290912E07B88400F0209F /* ContentView.swift in Sources */,
-				3E3290922E07B88400F0209F /* FocusEntity.swift in Sources */,
-				3E3290932E07B88400F0209F /* AppTheme.swift in Sources */,
-				3E3290942E07B88400F0209F /* TabBarButton.swift in Sources */,
-				3E3290952E07B88400F0209F /* BlockCompletionSheet.swift in Sources */,
-				3E3290962E07B88400F0209F /* WeeklyProgressChart.swift in Sources */,
-				3E3290972E07B88400F0209F /* AddTaskView.swift in Sources */,
-				3E3290982E07B88400F0209F /* AppBlockingManager.swift in Sources */,
-				3E3290992E07B88400F0209F /* StatisticCard.swift in Sources */,
-				3E32909A2E07B88400F0209F /* Onboarding.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -427,6 +621,82 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3EA0122D2E0A585C00EF978E /* TabBarButton.swift in Sources */,
+				3EA0122E2E0A585C00EF978E /* StatisticsManager.swift in Sources */,
+				3EA0122F2E0A585C00EF978E /* HomeView.swift in Sources */,
+				3EA012302E0A585C00EF978E /* AISessionRecommender.swift in Sources */,
+				3EA012862E0A586600EF978E /* EnvironmentalBackground.swift in Sources */,
+				3EA012872E0A586600EF978E /* AppTheme.swift in Sources */,
+				3EA012882E0A586600EF978E /* WeeklyProgressChart.swift in Sources */,
+				3EA012892E0A586600EF978E /* FocusWidget.swift in Sources */,
+				3EA0128A2E0A586600EF978E /* EnvironmentalThemeManager.swift in Sources */,
+				3EA0128B2E0A586600EF978E /* FocusEntityManager.swift in Sources */,
+				3EA0128C2E0A586600EF978E /* FocusFlowWidget.swift in Sources */,
+				3EA0128D2E0A586600EF978E /* StatisticsManager.swift in Sources */,
+				3EA0128E2E0A586600EF978E /* TaskViewModel.swift in Sources */,
+				3EA0128F2E0A586600EF978E /* ProductivityGardenManager.swift in Sources */,
+				3EA012902E0A586600EF978E /* MenuBarManager.swift in Sources */,
+				3EA012912E0A586600EF978E /* AdvancedBlockingManager.swift in Sources */,
+				3EA012922E0A586600EF978E /* AmbientSoundManager.swift in Sources */,
+				3EA012932E0A586600EF978E /* ProductivityGarden.swift in Sources */,
+				3EA012942E0A586600EF978E /* Focus_FlowApp.swift in Sources */,
+				3EA012952E0A586600EF978E /* BlockCompletionSheet.swift in Sources */,
+				3EA012962E0A586600EF978E /* AISessionRecommender.swift in Sources */,
+				3EA012972E0A586600EF978E /* Onboarding.swift in Sources */,
+				3EA012982E0A586600EF978E /* StatisticCard.swift in Sources */,
+				3EA012992E0A586600EF978E /* HomeView.swift in Sources */,
+				3EA0129A2E0A586600EF978E /* TimerView.swift in Sources */,
+				3EA0129B2E0A586600EF978E /* AppBlockingSettingsView.swift in Sources */,
+				3EA0129C2E0A586600EF978E /* FocusEntity.swift in Sources */,
+				3EA0129D2E0A586600EF978E /* ConfigureFocusModeIntent.swift in Sources */,
+				3EA0129E2E0A586600EF978E /* ScreenTimeManager.swift in Sources */,
+				3EA0129F2E0A586600EF978E /* AppBlockingManager.swift in Sources */,
+				3EA012A02E0A586600EF978E /* Persistence.swift in Sources */,
+				3EA012A12E0A586600EF978E /* AddTaskView.swift in Sources */,
+				3EA012A22E0A586600EF978E /* SettingsView.swift in Sources */,
+				3EA012A32E0A586600EF978E /* TabBarButton.swift in Sources */,
+				3EA012A42E0A586600EF978E /* AISessionRecommender.swift in Sources */,
+				3EA012A52E0A586600EF978E /* ParticleEffectView.swift in Sources */,
+				3EA012A62E0A586600EF978E /* PremiumStore.swift in Sources */,
+				3EA012A72E0A586600EF978E /* EnvironmentalTheme.swift in Sources */,
+				3EA012A82E0A586600EF978E /* NetworkBlockingService.swift in Sources */,
+				3EA012A92E0A586600EF978E /* ContentView.swift in Sources */,
+				3EA012AA2E0A586600EF978E /* AdvancedAppBlockingManager.swift in Sources */,
+				3EA012AB2E0A586600EF978E /* Focus_Flow.xcdatamodeld in Sources */,
+				3EA012312E0A585C00EF978E /* ContentView.swift in Sources */,
+				3EA012322E0A585C00EF978E /* Persistence.swift in Sources */,
+				3EA012332E0A585C00EF978E /* ProductivityGarden.swift in Sources */,
+				3EA012342E0A585C00EF978E /* FocusWidget.swift in Sources */,
+				3EA012352E0A585C00EF978E /* AdvancedAppBlockingManager.swift in Sources */,
+				3EA012362E0A585C00EF978E /* AISessionRecommender.swift in Sources */,
+				3EA012372E0A585C00EF978E /* FocusEntity.swift in Sources */,
+				3EA012382E0A585C00EF978E /* TaskViewModel.swift in Sources */,
+				3EA012392E0A585C00EF978E /* AdvancedBlockingManager.swift in Sources */,
+				3EA0123A2E0A585C00EF978E /* AppTheme.swift in Sources */,
+				3EA0123B2E0A585C00EF978E /* EnvironmentalTheme.swift in Sources */,
+				3EA0123C2E0A585C00EF978E /* TimerView.swift in Sources */,
+				3EA0123D2E0A585C00EF978E /* AmbientSoundManager.swift in Sources */,
+				3EA0123E2E0A585C00EF978E /* BlockCompletionSheet.swift in Sources */,
+				3EA0123F2E0A585C00EF978E /* Focus_Flow.xcdatamodeld in Sources */,
+				3EA012402E0A585C00EF978E /* Focus_FlowApp.swift in Sources */,
+				3EA012412E0A585C00EF978E /* WeeklyProgressChart.swift in Sources */,
+				3EA012422E0A585C00EF978E /* AppBlockingManager.swift in Sources */,
+				3EA012432E0A585C00EF978E /* FocusFlowWidget.swift in Sources */,
+				3EA012442E0A585C00EF978E /* AddTaskView.swift in Sources */,
+				3EA012452E0A585C00EF978E /* ProductivityGardenManager.swift in Sources */,
+				3EA012462E0A585C00EF978E /* PremiumStore.swift in Sources */,
+				3EA012472E0A585C00EF978E /* MenuBarManager.swift in Sources */,
+				3EA012482E0A585C00EF978E /* EnvironmentalThemeManager.swift in Sources */,
+				3EA012492E0A585C00EF978E /* ParticleEffectView.swift in Sources */,
+				3EA0124A2E0A585C00EF978E /* Onboarding.swift in Sources */,
+				3EA0124B2E0A585C00EF978E /* FocusEntityManager.swift in Sources */,
+				3EA0124C2E0A585C00EF978E /* EnvironmentalBackground.swift in Sources */,
+				3EA0124D2E0A585C00EF978E /* ScreenTimeManager.swift in Sources */,
+				3EA0124E2E0A585C00EF978E /* ConfigureFocusModeIntent.swift in Sources */,
+				3EA0124F2E0A585C00EF978E /* AppBlockingSettingsView.swift in Sources */,
+				3EA012502E0A585C00EF978E /* SettingsView.swift in Sources */,
+				3EA012512E0A585C00EF978E /* StatisticCard.swift in Sources */,
+				3EA012522E0A585C00EF978E /* NetworkBlockingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,12 +1013,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		3E32907B2E07B88400F0209F /* Focus_Flow.xcdatamodeld */ = {
+		3EA0122A2E0A585C00EF978E /* Focus_Flow.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				3E32907D2E07B88400F0209F /* Focus_Flow.xcdatamodel */,
+				3EA0122C2E0A585C00EF978E /* Focus_Flow.xcdatamodel */,
 			);
-			currentVersion = 3E32907D2E07B88400F0209F /* Focus_Flow.xcdatamodel */;
+			currentVersion = 3EA0122C2E0A585C00EF978E /* Focus_Flow.xcdatamodel */;
+			path = Focus_Flow.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		3EA012832E0A586600EF978E /* Focus_Flow.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3EA012852E0A586600EF978E /* Focus_Flow.xcdatamodel */,
+			);
+			currentVersion = 3EA012852E0A586600EF978E /* Focus_Flow.xcdatamodel */;
 			path = Focus_Flow.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
