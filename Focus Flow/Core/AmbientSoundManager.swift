@@ -1,5 +1,6 @@
 import AVFoundation
 import SwiftUI
+import UIKit
 import Combine
 
 class AmbientSoundManager: ObservableObject {
@@ -156,6 +157,15 @@ class AmbientSoundManager: ObservableObject {
         
         currentSound = moodSet.sounds.first
         HapticStyle.success.trigger()
+    }
+    
+    // Convenience methods for the UI
+    func play(sound: AmbientSound) {
+        playSound(sound)
+    }
+    
+    func stop() {
+        stopAllSounds()
     }
     
     private func fadeVolume(for player: AVAudioPlayer, to targetVolume: Float, duration: TimeInterval, completion: (() -> Void)? = nil) {
@@ -460,31 +470,4 @@ struct AmbientMoodSet: Identifiable {
     ]
 }
 
-// MARK: - Haptic Feedback Extension
-
-enum HapticStyle {
-    case light, medium, heavy, success, warning, error
-    
-    func trigger() {
-        switch self {
-        case .light:
-            let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-            impactFeedback.impactOccurred()
-        case .medium:
-            let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-            impactFeedback.impactOccurred()
-        case .heavy:
-            let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
-            impactFeedback.impactOccurred()
-        case .success:
-            let notificationFeedback = UINotificationFeedbackGenerator()
-            notificationFeedback.notificationOccurred(.success)
-        case .warning:
-            let notificationFeedback = UINotificationFeedbackGenerator()
-            notificationFeedback.notificationOccurred(.warning)
-        case .error:
-            let notificationFeedback = UINotificationFeedbackGenerator()
-            notificationFeedback.notificationOccurred(.error)
-        }
-    }
-} 
+ 

@@ -111,4 +111,25 @@ class AppBlockingManager: ObservableObject {
     var currentlyBlockedApps: [BlockedApp] {
         blockedApps.filter { $0.isBlocked }
     }
+    
+    // Add a blocked app by bundleId
+    func addBlockedApp(_ bundleId: String) {
+        if let index = blockedApps.firstIndex(where: { $0.bundleId == bundleId }) {
+            blockedApps[index].isBlocked = true
+        }
+        saveBlockedApps()
+    }
+    
+    // Remove a blocked app by bundleId
+    func removeBlockedApp(_ bundleId: String) {
+        if let index = blockedApps.firstIndex(where: { $0.bundleId == bundleId }) {
+            blockedApps[index].isBlocked = false
+        }
+        saveBlockedApps()
+    }
+    
+    // Get blocked bundle IDs as a Set
+    var blockedBundleIds: Set<String> {
+        Set(blockedApps.filter { $0.isBlocked }.map { $0.bundleId })
+    }
 }

@@ -63,28 +63,15 @@ class AppTheme {
     
     // MARK: - Semantic Colors
     struct Colors {
-        // Primary colors (dynamic based on selected theme)
-        static var primary: Color {
-            switch AppTheme.current {
-            case .blue: return Color(hex: "4facfe")    // Blue theme primary
-            case .green: return Color(hex: "43e97b")   // Green theme primary
-            case .purple: return Color(hex: "667eea")  // Purple theme primary
-            }
-        }
-        static var secondary: Color {
-            switch AppTheme.current {
-            case .blue: return Color(hex: "00f2fe")    // Blue theme secondary
-            case .green: return Color(hex: "38f9d7")   // Green theme secondary
-            case .purple: return Color(hex: "764ba2")  // Purple theme secondary
-            }
-        }
-        static var accent: Color {
-            switch AppTheme.current {
-            case .blue: return Color(hex: "00f2fe")     // Blue theme accent
-            case .green: return Color(hex: "38f9d7")   // Green theme accent
-            case .purple: return Color(hex: "f093fb")  // Purple theme accent
-            }
-        }
+        // Simplified warm color palette
+        static let primary = Color.brown
+        static let secondary = Color.orange
+        static let accent = Color.orange.opacity(0.8)
+        
+        // Warm gradient colors for environmental themes
+        static let warmPrimary = Color(red: 0.6, green: 0.4, blue: 0.2) // Rich brown
+        static let warmSecondary = Color(red: 1.0, green: 0.65, blue: 0.0) // Orange
+        static let warmAccent = Color(red: 0.9, green: 0.5, blue: 0.1) // Warm orange
         
         // Background colors
         static let background = Color(hex: "0a0a0a")
@@ -347,7 +334,7 @@ struct AnimatedGradientBackground: View {
 
 // MARK: - Focus Mode Extension
 
-enum FocusMode: String, CaseIterable {
+enum FocusMode: String, CaseIterable, Codable {
     case deepWork = "Deep Work"
     case creativeFlow = "Creative Flow"
     case learning = "Learning"
@@ -356,21 +343,31 @@ enum FocusMode: String, CaseIterable {
     
     var ambientSound: String? {
         switch self {
-        case .deepWork: return "brown_noise"
-        case .creativeFlow: return "rain_forest"
+        case .deepWork: return "deep_space"
+        case .creativeFlow: return "aurora_waves"
         case .learning: return "library_ambience"
-        case .mindfulFocus: return "meditation_bells"
-        default: return nil
+        case .quickSprint: return "energetic_beats"
+        case .mindfulFocus: return "zen_garden"
         }
     }
 
     var icon: String {
         switch self {
-        case .deepWork: return "brain"
+        case .deepWork: return "brain.head.profile"
         case .creativeFlow: return "paintbrush.fill"
         case .learning: return "book.fill"
         case .quickSprint: return "bolt.fill"
-        case .mindfulFocus: return "lungs.fill"
+        case .mindfulFocus: return "leaf.fill"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .deepWork: return .blue
+        case .creativeFlow: return .purple
+        case .learning: return .green
+        case .quickSprint: return .orange
+        case .mindfulFocus: return .mint
         }
     }
     
@@ -383,6 +380,31 @@ enum FocusMode: String, CaseIterable {
         case .mindfulFocus: return 20
         }
     }
+    
+    var displayName: String { rawValue }
+    var shortName: String { rawValue.components(separatedBy: " ").first ?? rawValue }
+    
+    var hasParticleEffects: Bool {
+        switch self {
+        case .creativeFlow, .mindfulFocus: return true
+        default: return false
+        }
+    }
+    
+    var hasAmbientSound: Bool { true }
+    
+    var gradientColors: [Color] {
+        switch self {
+        case .deepWork: return [.blue, .indigo]
+        case .creativeFlow: return [.purple, .pink]
+        case .learning: return [.green, .teal]
+        case .quickSprint: return [.orange, .red]
+        case .mindfulFocus: return [.mint, .cyan]
+        }
+    }
+    
+    var accentColor: Color { color }
+    var requiresStrictBlocking: Bool { self == .deepWork }
 }
 
 // MARK: - Shadow Model
@@ -428,8 +450,10 @@ extension Color {
     static var themeTextSecondary: Color { AppTheme.Colors.textSecondary }
     /// Color for timer text in HomeView
     static var timerText: Color { themeTextPrimary }
-    /// Background color for primary buttons
-    static var buttonBackground: Color { themePrimary }
+    /// Background color for primary buttons - now using warm brown
+    static var buttonBackground: Color { AppTheme.Colors.primary }
+    /// Warm accent color for interactive elements
+    static var warmAccent: Color { AppTheme.Colors.warmAccent }
 }
 
 // MARK: - Haptic Feedback
@@ -460,17 +484,13 @@ enum HapticStyle {
 // MARK: - Theme Selection
 extension AppTheme {
     enum Preset {
-        case blue, green, purple
+        case warm // Simplified to one warm theme
     }
 
     /// The currently selected theme preset
-    static var current: Preset = .blue
-    /// Blue theme preset
-    static var blue: Preset { .blue }
-    /// Green theme preset
-    static var green: Preset { .green }
-    /// Purple theme preset
-    static var purple: Preset { .purple }
+    static var current: Preset = .warm
+    /// Warm theme preset (brown/orange)
+    static var warm: Preset { .warm }
     /// Alias for large padding
     static var largePadding: CGFloat { Spacing.l }
 }

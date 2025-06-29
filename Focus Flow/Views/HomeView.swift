@@ -2,368 +2,269 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var taskViewModel: TaskViewModel
-    @EnvironmentObject var blockingManager: AppBlockingManager
-    @AppStorage("defaultFocusDuration") private var defaultFocusDuration: Int = 25
-    @State private var showingTagSelection = false
-    @State private var selectedTag: FocusTag = .focus
-    @State private var showingTimerView = false
-    @State private var duration: Int = 0 // Will be set to default on appear
-    @State private var showingDurationOptions = false
     @StateObject private var aiRecommender = AISessionRecommender()
-    @StateObject private var environmentManager = EnvironmentalThemeManager()
+    @State private var selectedMinutes: Int = 50
+    @State private var selectedTag: String = "Study"
+    @State private var timerIsActive = false
+    @State private var showingTimerView = false
+    @State private var showingTimeSelector = false
+    @State private var showingTagSelector = false
+    @State private var navigateToTimer = false
+    @Binding var showingAddTask: Bool
     
-    // Duration presets (in minutes)
-    let durationOptions = [15, 25, 30, 45, 60, 90, 120]
+    let timeOptions = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90]
+    let tags = ["Focus", "Study", "Work", "Read", "Fitness"]
     
     var body: some View {
-        ZStack {
-            // Dynamic Environmental Background
-            EnvironmentalBackground(
-                theme: environmentManager.currentTheme,
-                animated: true
-            )
-            .edgesIgnoringSafeArea(.all)
-            
-            VStack(spacing: 40) {
-                // AI Recommendation Card
-                if let recommendation = aiRecommender.recommendation {
-                    AIRecommendationCard(recommendation: recommendation) {
-                        startRecommendedSession(recommendation)
-                    }
-                    .padding(.horizontal)
-                }
+        NavigationStack {
+            ZStack {
+                // Warm beige background
+                Color(red: 0.96, green: 0.93, blue: 0.88)
+                    .ignoresSafeArea()
                 
-                HStack {
+                VStack(spacing: 0) {
                     Spacer()
-                    Button(action: {
-                        blockingManager.toggleBlockingEnabled()
-                    }) {
-                        Image(systemName: blockingManager.isBlockingEnabled ? "bell.slash.fill" : "bell.fill")
-                            .font(.title2)
-                            .foregroundColor(blockingManager.isBlockingEnabled ? Color.themePrimary : Color.gray)
-                    }
-                    .padding(.trailing, AppTheme.Spacing.l)
-                }
-                Spacer()
-                
-                // Timer display
-                Text("\(duration):00")
-                    .font(.system(size: AppTheme.timerDisplay, weight: .semibold))
-                    .foregroundColor(Color.timerText)
-                    .monospacedDigit()
-                    .onTapGesture {
-                        showingDurationOptions = true
-                    }
-                
-                // Tag name
-                HStack {
-                    Text(selectedTag.name)
-                        .font(.title2)
-                        .foregroundColor(Color.timerText.opacity(0.8))
                     
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(Color.timerText.opacity(0.6))
-                        .font(.system(size: 16))
+                    // Timer Display - Centered and Clickable
+                    VStack(spacing: 16) {
+                        Button(action: { showingTimeSelector = true }) {
+                            Text("\(selectedMinutes):00")
+                                .font(.system(size: AppTheme.timerDisplay, weight: .medium, design: .rounded))
+                                .foregroundColor(Color(red: 0.3, green: 0.25, blue: 0.2))
+                        }
+                        
+                        Button(action: { showingTagSelector = true }) {
+                            Text(selectedTag)
+                                .font(.title2)
+                                .foregroundColor(Color(red: 0.5, green: 0.4, blue: 0.35))
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    // Start Button
+                    Button(action: startFocusSession) {
+                        Text("Start Focus")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .frame(width: 180, height: 60)
+                            .background(
+                                RoundedRectangle(cornerRadius: 30)
+                                    .fill(Color(red: 0.4, green: 0.3, blue: 0.25))
+                            )
+                    }
+                    .padding(.bottom, 60)
                 }
-                .onTapGesture {
-                    showingTagSelection = true
-                }
-                
-                Spacer()
-                
-                // Start button
-                Button {
-                    createAndStartSession()
-                } label: {
-                    Text("Start Focus")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color.timerText)
-                        .padding(.vertical, 16)
-                        .padding(.horizontal, AppTheme.largePadding * 1.5)
-                        .background(
-                            Capsule()
-                                .fill(Color.buttonBackground)
-                        )
-                }
-                .standardShadow()
-                .padding(Edge.Set.bottom, 50)
             }
+            .navigationBarHidden(true)
+            .navigationDestination(isPresented: $navigateToTimer) {
+                if let activeTask = taskViewModel.activeTask {
+                    TimerView(task: activeTask, focusMode: getFocusMode())
+                        .navigationBarHidden(true)
+                }
+            }
+        }
+        .sheet(isPresented: $showingTimeSelector) {
+            TimeSelector(selectedMinutes: $selectedMinutes)
+        }
+        .sheet(isPresented: $showingTagSelector) {
+            TagSelector(selectedTag: $selectedTag)
         }
         .onAppear {
-            duration = defaultFocusDuration
             aiRecommender.analyzeAndRecommend()
-            environmentManager.updateForTimeOfDay()
-        }
-        .sheet(isPresented: $showingTagSelection) {
-            TagSelectionView(selectedTag: $selectedTag)
-                .presentationDetents([.medium])
-        }
-        .actionSheet(isPresented: $showingDurationOptions) {
-            ActionSheet(
-                title: Text("Select Duration"),
-                buttons: durationOptions.map { minutes in
-                    .default(Text("\(minutes) minutes")) {
-                        duration = minutes
-                    }
-                } + [.cancel()]
-            )
-        }
-        .fullScreenCover(isPresented: $showingTimerView) {
-            if let task = taskViewModel.currentTask {
-                TimerView(task: task)
-                    .environmentObject(taskViewModel)
-            }
         }
     }
     
-    private func createAndStartSession() {
-        taskViewModel.createTask(
-            title: selectedTag.name,
-            totalMinutes: Int64(duration),
-            blockMinutes: Int64(duration),
-            breakMinutes: Int64(defaultFocusDuration / 5), // dynamic break
-            tag: selectedTag.name
+    private func startFocusSession() {
+        // Create or get active task
+        let task = taskViewModel.createQuickTask(
+            title: selectedTag,
+            duration: selectedMinutes,
+            tag: selectedTag
         )
-        showingTimerView = true
+        
+        taskViewModel.startTask(task)
+        navigateToTimer = true
     }
     
-    // MARK: - AI Recommended Session
-    private func startRecommendedSession(_ recommendation: SessionRecommendation) {
-        // Use recommended duration and start session
-        duration = recommendation.focusDuration
-        createAndStartSession()
-    }
-}
-
-// MARK: - FocusTag model
-enum FocusTag: String, CaseIterable, Identifiable {
-    case focus = "Focus"
-    case read = "Read"
-    case study = "Study"
-    case work = "Work"
-    case fitness = "Fitness"
-    case newTag = "New Tag"
-    
-    var id: String { self.rawValue }
-    
-    var name: String {
-        self.rawValue
+    private func showTimeSelector() {
+        showingTimeSelector = true
     }
     
-    var color: Color {
-        switch self {
-        case .focus:
-            return .orange
-        case .read:
-            return .yellow
-        case .study:
-            return .teal
-        case .work:
-            return .green
-        case .fitness:
-            return .orange.opacity(0.8)
-        case .newTag:
-            return .red.opacity(0.7)
+    private func showTagSelector() {
+        showingTagSelector = true
+    }
+    
+    private func getFocusMode() -> FocusMode {
+        switch selectedTag {
+        case "Study", "Learning":
+            return .learning
+        case "Work":
+            return .deepWork
+        case "Creative", "Design":
+            return .creativeFlow
+        case "Read", "Reading":
+            return .mindfulFocus
+        case "Fitness", "Exercise":
+            return .quickSprint
+        default:
+            return .deepWork
         }
     }
 }
 
-// MARK: - Tag Selection View
-struct TagSelectionView: View {
-    @Binding var selectedTag: FocusTag
-    @State private var newTagName = ""
-    @State private var showingNewTagField = false
+// MARK: - Time Selector Sheet
+struct TimeSelector: View {
+    @Binding var selectedMinutes: Int
     @Environment(\.dismiss) private var dismiss
     
+    let timeOptions = stride(from: 10, through: 90, by: 5).map { $0 }
+    
     var body: some View {
-        VStack(spacing: 20) {
-            // Sheet indicator
-            Capsule()
-                .fill(Color.gray.opacity(0.5))
-                .frame(width: 40, height: 5)
-                .padding(.top, 8)
-            
-            Text("Select Tag")
-                .font(.title2)
-                .fontWeight(.bold)
-                .padding(.bottom, 10)
-            
-            ScrollView {
-                VStack(spacing: 16) {
-                    // New Tag button
-                    TagSelectionButton(
-                        color: Color.red.opacity(0.7),
-                        icon: "lock.fill",
-                        title: "New Tag",
-                        isLocked: true,
-                        isSelected: false
-                    ) {
-                        // This would open a premium upgrade sheet in a real app
+        NavigationView {
+            ZStack {
+                Color(red: 0.96, green: 0.93, blue: 0.88)
+                    .ignoresSafeArea()
+                
+                VStack {
+                    // Visual time slider representation
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            ForEach(timeOptions, id: \.self) { minutes in
+                                Button(action: {
+                                    selectedMinutes = minutes
+                                    dismiss()
+                                }) {
+                                    HStack {
+                                        Text("\(minutes)")
+                                            .font(.title2)
+                                            .fontWeight(selectedMinutes == minutes ? .bold : .regular)
+                                            .foregroundColor(selectedMinutes == minutes ? .orange : .primary)
+                                        
+                                        Spacer()
+                                        
+                                        Text("minutes")
+                                            .font(.body)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .padding(.horizontal, 30)
+                                    .padding(.vertical, 12)
+                                }
+                            }
+                        }
                     }
+                }
+            }
+            .navigationTitle("Select Duration")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Tag Selector Sheet
+struct TagSelector: View {
+    @Binding var selectedTag: String
+    @Environment(\.dismiss) private var dismiss
+    
+    let tags = [
+        ("Focus", Color.orange),
+        ("Study", Color.teal),
+        ("Work", Color.green),
+        ("Read", Color.yellow),
+        ("Fitness", Color.orange)
+    ]
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                Color(red: 0.96, green: 0.93, blue: 0.88)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 20) {
+                    Text("Select Tag")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.top, 40)
                     
-                    // Standard tags in a grid layout
-                    TagGrid(selectedTag: $selectedTag)
+                    VStack(spacing: 16) {
+                        ForEach(tags, id: \.0) { tag, color in
+                            Button(action: {
+                                selectedTag = tag
+                                dismiss()
+                            }) {
+                                HStack {
+                                    Circle()
+                                        .fill(color)
+                                        .frame(width: 12, height: 12)
+                                    
+                                    Text(tag)
+                                        .font(.title3)
+                                        .fontWeight(.medium)
+                                    
+                                    Spacer()
+                                    
+                                    if selectedTag == tag {
+                                        Image(systemName: "checkmark")
+                                            .foregroundColor(.green)
+                                    }
+                                }
+                                .foregroundColor(.primary)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(selectedTag == tag ? color.opacity(0.2) : Color.white)
+                                )
+                            }
+                        }
+                        
+                        // New Tag Button
+                        Button(action: {
+                            // Add new tag functionality
+                        }) {
+                            HStack {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(.white)
+                                
+                                Text("New Tag")
+                                    .font(.title3)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(Color(red: 0.85, green: 0.5, blue: 0.4))
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 30)
+                    
+                    Spacer()
                 }
-                .padding(.horizontal)
             }
-            
-            Spacer()
-            
-            // Done button
-            Button("Done") {
-                dismiss()
-            }
-            .font(.headline)
-            .foregroundColor(.white)
-            .padding(.vertical, 12)
-            .padding(.horizontal, 40)
-            .background(Color.black)
-            .cornerRadius(12)
-            .padding(.bottom, 30)
-        }
-        .padding()
-        .background(Color(UIColor.systemBackground))
-    }
-}
-
-// Grid layout for tags
-struct TagGrid: View {
-    @Binding var selectedTag: FocusTag
-    
-    var body: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-            ForEach(FocusTag.allCases.filter { $0 != .newTag }) { tag in
-                TagSelectionButton(
-                    color: tag.color,
-                    icon: nil,
-                    title: tag.name,
-                    isLocked: false,
-                    isSelected: selectedTag == tag
-                ) {
-                    selectedTag = tag
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
-        }
-    }
-}
-
-// Tag button in selection sheet
-struct TagSelectionButton: View {
-    let color: Color
-    let icon: String?
-    let title: String
-    let isLocked: Bool
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                if let icon = icon {
-                    Image(systemName: icon)
-                        .foregroundColor(.white)
-                        .padding(.leading, 8)
-                } else {
-                    Circle()
-                        .fill(color)
-                        .frame(width: 10, height: 10)
-                        .padding(.leading, 8)
-                }
-                
-                Text(title)
-                    .foregroundColor(isLocked ? .white : (isSelected ? color : .primary))
-                    .font(.headline)
-                
-                Spacer()
-            }
-            .padding(.vertical, 16)
-            .background(
-                Capsule()
-                    .fill(
-                        isLocked ? 
-                            color :
-                            (isSelected ? color.opacity(0.2) : Color.gray.opacity(0.2))
-                    )
-            )
         }
     }
 }
 
-// MARK: - TagButton Component for main view
-struct TagButton: View {
-    let tag: FocusTag
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                if tag == .newTag {
-                    Image(systemName: "lock.fill")
-                        .foregroundColor(.white)
-                        .padding(.leading, 8)
-                } else {
-                    Circle()
-                        .fill(tag.color)
-                        .frame(width: 10, height: 10)
-                        .padding(.leading, 8)
-                }
-                
-                Text(tag.name)
-                    .foregroundColor(tag == .newTag ? .white : .primary)
-                    .font(.headline)
-                
-                Spacer()
-            }
-            .padding(.vertical, 16)
-            .background(
-                Capsule()
-                    .fill(
-                        tag == .newTag ? 
-                            Color.red.opacity(0.7) :
-                            (isSelected ? tag.color.opacity(0.2) : Color.gray.opacity(0.2))
-                    )
-            )
-        }
-    }
+#Preview {
+    HomeView(showingAddTask: .constant(false))
+        .environmentObject(TaskViewModel(context: PersistenceController.preview.container.viewContext))
 }
-
-// MARK: - AI Recommendation Card
-struct AIRecommendationCard: View {
-    let recommendation: SessionRecommendation
-    let onAccept: () -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("AI Recommendation")
-                .font(.headline)
-
-            HStack {
-                Text("\(recommendation.focusDuration)-minute \(recommendation.suggestedMode.rawValue)")
-                    .font(.subheadline)
-                Spacer()
-                Button(action: onAccept) {
-                    Text("Start")
-                        .font(.subheadline)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(Capsule().fill(Color.themePrimary))
-                        .foregroundColor(.white)
-                }
-            }
-        }
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(UIColor.secondarySystemBackground)))
-        .shadow(radius: 5)
-    }
-}
-
-//// MARK: - Preview
-//struct HomeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HomeView()
-//            .environmentObject(TaskViewModel())
-//    }
-//} 
-

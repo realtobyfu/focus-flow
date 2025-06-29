@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ParticleEffectView: View {
     let particleSystem: ParticleSystem
@@ -209,6 +210,29 @@ struct ParticleView: View {
                     .position(particle.position)
                     .rotationEffect(.degrees(particle.rotation))
 
+            case .leaves:
+                Image(systemName: "leaf.fill")
+                    .font(.system(size: particle.size))
+                    .foregroundColor(.green)
+                    .opacity(particle.opacity)
+                    .position(particle.position)
+                    .rotationEffect(.degrees(particle.rotation))
+
+            case .mist:
+                Circle()
+                    .fill(Color.white.opacity(0.3))
+                    .frame(width: particle.size, height: particle.size)
+                    .blur(radius: particle.size * 0.5)
+                    .opacity(particle.opacity)
+                    .position(particle.position)
+
+            case .clouds:
+                Image(systemName: "cloud.fill")
+                    .font(.system(size: particle.size))
+                    .foregroundColor(.white.opacity(0.7))
+                    .opacity(particle.opacity)
+                    .position(particle.position)
+
             case .fireflies:
                 Circle()
                     .fill(Color.yellow)
@@ -218,7 +242,7 @@ struct ParticleView: View {
                     .position(particle.position)
                     .shadow(color: .yellow, radius: particle.size)
 
-            default:
+            case .none:
                 EmptyView()
             }
         }

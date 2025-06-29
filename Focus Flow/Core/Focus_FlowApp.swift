@@ -17,8 +17,10 @@ struct Focus_FlowApp: App {
     // App Blocking Manager
     @StateObject private var blockingManager = AppBlockingManager()
     
-    // Theme state
-    @AppStorage("selectedTheme") private var selectedTheme: Int = 0
+    // Productivity Garden Manager
+    @StateObject private var gardenManager = ProductivityGardenManager()
+    
+    // App state
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     
     init() {
@@ -26,8 +28,8 @@ struct Focus_FlowApp: App {
         let context = persistenceController.container.viewContext
         _taskViewModel = StateObject(wrappedValue: TaskViewModel(context: context))
         
-        // Set initial theme based on saved preference
-        updateTheme()
+        // Set the warm theme (only available theme)
+        AppTheme.current = .warm
     }
     
     var body: some Scene {
@@ -41,29 +43,13 @@ struct Focus_FlowApp: App {
             }
             .environmentObject(taskViewModel)
             .environmentObject(blockingManager)
+            .environmentObject(gardenManager)
             .onAppear {
-                // Ensure theme is applied when app launches
-                updateTheme()
                 if hasSeenOnboarding {
                     // Refresh tasks when app launches
                     taskViewModel.fetchTasks()
                 }
             }
-        }
-        .onChange(of: selectedTheme) { newValue in
-            updateTheme()
-        }
-    }
-    
-    private func updateTheme() {
-        // Update app theme based on selection
-        switch selectedTheme {
-        case 1:
-            AppTheme.current = AppTheme.green
-        case 2:
-            AppTheme.current = AppTheme.purple
-        default:
-            AppTheme.current = AppTheme.blue
         }
     }
 }

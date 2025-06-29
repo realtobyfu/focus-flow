@@ -147,68 +147,6 @@ struct SessionRecommendation {
     let alternativeOptions: [SessionRecommendation]
 }
 
-enum FocusMode: String, CaseIterable {
-    case deepWork = "Deep Work"
-    case creativeFlow = "Creative Flow"
-    case learning = "Learning"
-    case quickSprint = "Quick Sprint"
-    case mindfulFocus = "Mindful Focus"
-    
-    var icon: String {
-        switch self {
-        case .deepWork: return "brain.head.profile"
-        case .creativeFlow: return "paintbrush.fill"
-        case .learning: return "book.fill"
-        case .quickSprint: return "bolt.fill"
-        case .mindfulFocus: return "leaf.fill"
-        }
-    }
-    
-    var color: Color {
-        switch self {
-        case .deepWork: return .blue
-        case .creativeFlow: return .purple
-        case .learning: return .green
-        case .quickSprint: return .orange
-        case .mindfulFocus: return .mint
-        }
-    }
-    
-    var displayName: String { rawValue }
-    var shortName: String { rawValue.components(separatedBy: " ").first ?? rawValue }
-    
-    var hasParticleEffects: Bool {
-        switch self {
-        case .creativeFlow, .mindfulFocus: return true
-        default: return false
-        }
-    }
-    
-    var hasAmbientSound: Bool { true }
-    
-    var ambientSound: String? {
-        switch self {
-        case .deepWork: return "deep_space"
-        case .creativeFlow: return "aurora_waves"
-        case .learning: return "library_ambience"
-        case .quickSprint: return "energetic_beats"
-        case .mindfulFocus: return "zen_garden"
-        }
-    }
-    
-    var gradientColors: [Color] {
-        switch self {
-        case .deepWork: return [.blue, .indigo]
-        case .creativeFlow: return [.purple, .pink]
-        case .learning: return [.green, .teal]
-        case .quickSprint: return [.orange, .red]
-        case .mindfulFocus: return [.mint, .cyan]
-        }
-    }
-    
-    var accentColor: Color { color }
-    var requiresStrictBlocking: Bool { self == .deepWork }
-}
 
 struct AnalysisFactors {
     let timeFactors: TimeFactors

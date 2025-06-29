@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import Combine
 import CoreData
 
@@ -417,8 +418,8 @@ enum PlantType: String, CaseIterable, Codable {
         case .focusTree: return "<3"
         case .creativeBush: return "<:"
         case .learningVine: return "<C"
-        case .speedFlower: return "¡"
-        case .mindfulLotus: return ">·"
+        case .speedFlower: return "bolt.fill"
+        case .mindfulLotus: return "leaf.fill"
         }
     }
     
@@ -452,7 +453,7 @@ struct DailyProgress: Codable {
     }
 }
 
-struct Achievement: Identifiable, Codable, Equatable {
+struct Achievement: Identifiable, Codable, Equatable, Hashable {
     let id: String
     let title: String
     let description: String
@@ -464,7 +465,7 @@ struct Achievement: Identifiable, Codable, Equatable {
         return lhs.id == rhs.id
     }
     
-    enum AchievementRequirement: Codable {
+    enum AchievementRequirement: Codable, Hashable {
         case firstSession
         case dailyGoal(minutes: Int)
         case streak(days: Int)
@@ -472,6 +473,68 @@ struct Achievement: Identifiable, Codable, Equatable {
         case plantGrowth(count: Int)
         case gardenLevel(level: Int)
         case focusMode(mode: FocusMode, sessions: Int)
+        
+        enum CodingKeys: String, CodingKey {
+            case type, minutes, days, hours, count, level, mode, sessions
+        }
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            switch self {
+            case .firstSession:
+                try container.encode("firstSession", forKey: .type)
+            case .dailyGoal(let minutes):
+                try container.encode("dailyGoal", forKey: .type)
+                try container.encode(minutes, forKey: .minutes)
+            case .streak(let days):
+                try container.encode("streak", forKey: .type)
+                try container.encode(days, forKey: .days)
+            case .totalHours(let hours):
+                try container.encode("totalHours", forKey: .type)
+                try container.encode(hours, forKey: .hours)
+            case .plantGrowth(let count):
+                try container.encode("plantGrowth", forKey: .type)
+                try container.encode(count, forKey: .count)
+            case .gardenLevel(let level):
+                try container.encode("gardenLevel", forKey: .type)
+                try container.encode(level, forKey: .level)
+            case .focusMode(let mode, let sessions):
+                try container.encode("focusMode", forKey: .type)
+                try container.encode(mode, forKey: .mode)
+                try container.encode(sessions, forKey: .sessions)
+            }
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let type = try container.decode(String.self, forKey: .type)
+            
+            switch type {
+            case "firstSession":
+                self = .firstSession
+            case "dailyGoal":
+                let minutes = try container.decode(Int.self, forKey: .minutes)
+                self = .dailyGoal(minutes: minutes)
+            case "streak":
+                let days = try container.decode(Int.self, forKey: .days)
+                self = .streak(days: days)
+            case "totalHours":
+                let hours = try container.decode(Int.self, forKey: .hours)
+                self = .totalHours(hours: hours)
+            case "plantGrowth":
+                let count = try container.decode(Int.self, forKey: .count)
+                self = .plantGrowth(count: count)
+            case "gardenLevel":
+                let level = try container.decode(Int.self, forKey: .level)
+                self = .gardenLevel(level: level)
+            case "focusMode":
+                let mode = try container.decode(FocusMode.self, forKey: .mode)
+                let sessions = try container.decode(Int.self, forKey: .sessions)
+                self = .focusMode(mode: mode, sessions: sessions)
+            default:
+                throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Invalid type"))
+            }
+        }
     }
     
     static let allAchievements: [Achievement] = [
@@ -487,7 +550,7 @@ struct Achievement: Identifiable, Codable, Equatable {
             id: "daily_goal_1h",
             title: "Daily Dedication",
             description: "Focus for 1 hour in a single day",
-            icon: "ð",
+            icon: "clock.fill",
             experienceReward: 100,
             requirement: .dailyGoal(minutes: 60)
         ),
@@ -503,7 +566,7 @@ struct Achievement: Identifiable, Codable, Equatable {
             id: "total_10h",
             title: "Focus Master",
             description: "Accumulate 10 hours of total focus time",
-            icon: "<Æ",
+            icon: "star.fill",
             experienceReward: 300,
             requirement: .totalHours(hours: 10)
         ),

@@ -180,7 +180,7 @@ class PremiumStore: ObservableObject {
         return Task.detached {
             for await result in Transaction.updates {
                 do {
-                    let transaction = try self.checkVerified(result)
+                    let transaction = try await self.checkVerified(result)
                     await self.updatePurchasedProducts()
                     await transaction.finish()
                 } catch {
@@ -238,8 +238,9 @@ class PremiumStore: ObservableObject {
     func applyPromoCode(_ code: String) async -> Bool {
         // Handle promotional code redemption
         do {
-            try await AppStore.presentCodeRedemptionSheet()
-            return true
+            // Note: Code redemption sheet presentation may require different API
+            // For now, return false as not implemented
+            return false
         } catch {
             await MainActor.run {
                 self.error = StoreError.promoCodeFailed

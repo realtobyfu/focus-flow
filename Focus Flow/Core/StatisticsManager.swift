@@ -470,11 +470,12 @@ struct MLPredictions {
 // MARK: - ML Model Implementation
 
 class ProductivityMLModel {
-    private let model: MLModel?
+    private var model: MLModel?
     
     init() {
         // Load Core ML model if available
-        self.model = try? loadProductivityModel()
+        // Model loading would happen here if a real ML model was bundled
+        self.model = nil
     }
     
     func predict(features: MLFeatures) async throws -> MLPredictions {

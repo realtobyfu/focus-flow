@@ -1,6 +1,7 @@
 import WidgetKit
 import SwiftUI
 import Intents
+import AppIntents
 
 // MARK: - Widget Provider
 
@@ -496,7 +497,6 @@ class FocusWidgetConfigurationIntent: INIntent {
 
 // MARK: - Widget Bundle
 
-@main
 struct FocusWidgetBundle: WidgetBundle {
     var body: some Widget {
         FocusWidget()
@@ -651,16 +651,20 @@ struct QuickActionWidgetView: View {
                     .lineLimit(1)
             }
             
-            Button(intent: StartFocusIntent(duration: entry.suggestedDuration)) {
-                HStack {
-                    Image(systemName: "play.fill")
-                    Text("Start")
+            if #available(iOS 17.0, *) {
+                Button(intent: StartFocusIntent(duration: entry.suggestedDuration)) {
+                    HStack {
+                        Image(systemName: "play.fill")
+                        Text("Start")
+                    }
+                    .font(.caption)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Capsule().fill(Color.orange))
                 }
-                .font(.caption)
-                .foregroundColor(.white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Capsule().fill(Color.orange))
+            } else {
+                // Fallback on earlier versions
             }
         }
         .padding()

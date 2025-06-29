@@ -1,410 +1,291 @@
 import SwiftUI
+import AVFoundation
 
 struct TimerView: View {
     @ObservedObject var task: TaskEntity
+    let focusMode: FocusMode
+    
     @EnvironmentObject var taskViewModel: TaskViewModel
-    @Environment(\.presentationMode) var presentationMode
-    
-    // App blocking manager
-    @StateObject private var blockingManager = AppBlockingManager()
+    @EnvironmentObject var blockingManager: AppBlockingManager
+    @StateObject private var soundManager = AmbientSoundManager()
     @StateObject private var environmentManager = EnvironmentalThemeManager()
-    @StateObject private var ambientSoundManager = AmbientSoundManager()
-    
-    // Color theme - use named colors from assets
-    let themeColor = Color("ThemeColor")
-    let accentColor = Color("AccentColor")
-    let textColor = Color("TextColor")
     
     @State private var timeRemaining: Int = 0
     @State private var timerRunning = false
-    @State private var currentPhase: TimerPhase = .focus
     @State private var timer: Timer? = nil
-    @State private var showCompletionSheet = false
+    @State private var currentPhase: TimerPhase = .focus
     @State private var completedIntervals = 0
-    @State private var totalTimeElapsed: Int64 = 0
-    @State private var isPaused = false
-    @State private var showBlockingNotice = false
+    @State private var showingCompletionSheet = false
+    @State private var currentSound: AmbientSound?
     
-    enum TimerPhase: String {
-        case focus = "Focus Time"
-        case breakTime = "Break Time"
+    @Environment(\.dismiss) private var dismiss
+    
+    enum TimerPhase {
+        case focus, rest
     }
     
     var body: some View {
         ZStack {
-            // Dynamic Environmental Background
+            // Environmental Background
             EnvironmentalBackground(
                 theme: environmentManager.currentTheme,
-                animated: true
+                animated: timerRunning
             )
-            .edgesIgnoringSafeArea(.all)
+            .ignoresSafeArea()
             
-            VStack(spacing: 0) {
+            VStack {
                 // Top Bar
-                ZStack {
-                    Color.themePrimary
-                        .edgesIgnoringSafeArea(.top)
-                    HStack {
-                        Button(action: {
-                            // Confirm exit if timer is running
-                            if timerRunning {
-                                stopTimer()
-                                blockingManager.stopBlocking()
-                            }
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 20, weight: .medium))
-                                
-                                Text("Back")
-                                    .font(.headline)
-                            }
-                            .foregroundColor(.white)
-                        }
-                        .padding(.leading)
-                        
-                        Spacer()
-                    }
-                }
-                .frame(height: 60)
-                
-                // Task title / tag info
-                Group {
-                    Text(task.title ?? "Focus Session")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.themeTextPrimary)
-                        .padding(.top, 20)
-                    
-                    // Display tag if available
-                    if let tag = task.tag, !tag.isEmpty {
-                        Text(tag)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                            .padding(.top, 2)
-                    }
-                }
-                
-                // Session Type Indicator
                 HStack {
-                    Text(currentPhase.rawValue)
-                        .font(.headline)
-                        .foregroundColor(currentPhase == .focus ? themeColor : .green)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.white)
-                                .shadow(color: Color.black.opacity(0.05), radius: 3)
-                        )
+                    Button(action: handleExit) {
+                        Image(systemName: "xmark")
+                            .font(.title3)
+                            .foregroundColor(.white.opacity(0.8))
+                            .padding(12)
+                            .background(Circle().fill(Color.white.opacity(0.2)))
+                    }
                     
-                    if currentPhase == .focus {
-                        Text("\(completedIntervals + 1) of \(calculateTotalIntervals())")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.leading, 4)
+                    Spacer()
+                    
+                    // Sound toggle
+                    Button(action: toggleSound) {
+                        Image(systemName: soundManager.isPlaying ? "speaker.wave.3.fill" : "speaker.slash.fill")
+                            .font(.title3)
+                            .foregroundColor(.white.opacity(0.8))
+                            .padding(12)
+                            .background(Circle().fill(Color.white.opacity(0.2)))
                     }
                 }
-                .padding(.top, 16)
+                .padding()
                 
-                // Timer Circle - larger and more prominent
-                ZStack {
-                    // Outer progress ring
-                    CircularProgressView(progress: calculateProgress(),
-                                        lineWidth: 12,
-                                        primaryColor: currentPhase == .focus ? themeColor : Color.green,
-                                        secondaryColor: Color.gray.opacity(0.2))
-                        .frame(width: 300, height: 300)
+                Spacer()
+                
+                // Timer Display
+                VStack(spacing: 24) {
+                    Text(currentPhase == .focus ? focusMode.displayName : "Break Time")
+                        .font(.title2)
+                        .foregroundColor(.white.opacity(0.8))
                     
-                    // Inner white circle with time
-                    Circle()
-                        .fill(Color.white)
-                        .frame(width: 240, height: 240)
-                        .shadow(color: Color.black.opacity(0.1), radius: 5)
-                    
-                    // Time display
-                    VStack(spacing: 8) {
-                        Text(formatTime(timeRemaining))
-                            .font(.system(size: 64, weight: .bold))
-                            .foregroundColor(themeColor)
-                            .monospacedDigit()
+                    // Timer Ring
+                    ZStack {
+                        // Background ring
+                        Circle()
+                            .stroke(Color.white.opacity(0.2), lineWidth: 12)
+                            .frame(width: 280, height: 280)
                         
-                        Text(currentPhase == .focus ? "until break" : "until next focus session")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                .padding(.vertical, 20)
-                
-                // App Blocking Status (if enabled)
-                if blockingManager.isBlockingEnabled && currentPhase == .focus && timerRunning {
-                    HStack {
-                        Image(systemName: "bell.slash.fill")
-                            .foregroundColor(.orange)
+                        // Progress ring
+                        Circle()
+                            .trim(from: 0, to: timerProgress)
+                            .stroke(
+                                LinearGradient(
+                                    colors: currentPhase == .focus ? focusMode.gradientColors : [.green, .mint],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                            )
+                            .frame(width: 280, height: 280)
+                            .rotationEffect(.degrees(-90))
+                            .animation(.linear(duration: 1), value: timerProgress)
                         
-                        Text("Distracting apps are being blocked")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 16)
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
-                    .transition(.opacity)
-                }
-                
-                // Progress information
-                if currentPhase == .focus {
-                    // Session Progress (only show in focus mode)
-                    VStack(spacing: 8) {
-                        HStack {
-                            Text("Session Progress:")
-                                .font(.headline)
+                        // Time display
+                        VStack(spacing: 8) {
+                            Text(formatTime(timeRemaining))
+                                .font(.system(size: 64, weight: .light, design: .rounded))
+                                .foregroundColor(.white)
+                                .monospacedDigit()
                             
-                            Spacer()
-                            
-                            Text("\(Int(task.completionPercentage))%")
-                                .font(.headline)
-                                .foregroundColor(themeColor)
+                            Text(getMotivationalText())
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.6))
                         }
-                        .padding(.horizontal)
-                        
-                        // Progress bar
-                        GeometryReader { geometry in
-                            ZStack(alignment: .leading) {
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(height: 10)
-                                    .cornerRadius(5)
-                                
-                                Rectangle()
-                                    .fill(themeColor)
-                                    .frame(width: max(0, min(CGFloat(task.completionPercentage) / 100.0 * geometry.size.width, geometry.size.width)), height: 10)
-                                    .cornerRadius(5)
-                            }
-                        }
-                        .frame(height: 10)
-                        .padding(.horizontal)
                     }
-                    .padding(.top, 20)
+                    
+                    // Play/Pause button only
+                    Button(action: toggleTimer) {
+                        Image(systemName: timerRunning ? "pause.fill" : "play.fill")
+                            .font(.title)
+                            .foregroundColor(.black)
+                            .frame(width: 80, height: 80)
+                            .background(
+                                Circle()
+                                    .fill(Color.white)
+                                    .shadow(color: .white.opacity(0.5), radius: 10)
+                            )
+                    }
                 }
                 
                 Spacer()
                 
-                // Control Buttons
-                HStack(spacing: 24) {
-                    // Reset Button
-                    Button(action: {
-                        stopTimer()
-                        resetTimer()
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.red.opacity(0.15))
-                                .frame(width: 60, height: 60)
-                            
-                            Image(systemName: "arrow.counterclockwise")
-                                .font(.system(size: 24))
-                                .foregroundColor(.red)
-                        }
+                // Session info
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(task.title ?? "Focus Session")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Text("Interval \(completedIntervals + 1)")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.6))
                     }
                     
-                    // Play/Pause Button
-                    Button(action: {
-                        if timerRunning {
-                            pauseTimer()
-                        } else {
-                            startTimer()
-                        }
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(themeColor)
-                                .frame(width: 80, height: 80)
-                                .shadow(color: themeColor.opacity(0.4), radius: 5)
-                            
-                            Image(systemName: timerRunning ? "pause.fill" : "play.fill")
-                                .font(.system(size: 30))
-                                .foregroundColor(.white)
-                        }
-                    }
+                    Spacer()
                     
-                    // Skip Button
-                    Button(action: {
-                        skipToNextPhase()
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.gray.opacity(0.15))
-                                .frame(width: 60, height: 60)
-                            
-                            Image(systemName: "forward.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                        }
-                    }
+                    Text("\(Int(task.completionPercentage))%")
+                        .font(.headline)
+                        .foregroundColor(.white)
                 }
-                .padding(.bottom, 50)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white.opacity(0.1))
+                )
+                .padding()
             }
         }
-        .navigationBarHidden(true)
-        .onAppear(perform: {
-            initializeTimer()
-            environmentManager.updateForTimeOfDay()
-            setupAmbientAudio()
-            
-            // Handle the weird animation issue by using a slight delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                // Additional setup if needed
+        .onAppear {
+            setupTimer()
+            startBlockingIfEnabled()
+            // Auto-start the timer
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                startTimer()
             }
-        })
-        .sheet(isPresented: $showCompletionSheet) {
-            BlockCompletionSheet(task: task,
-                                currentPhase: $currentPhase,
-                                completedTime: currentPhase == .focus ? task.blockMinutes : 0) {
-                if currentPhase == .focus {
-                    // Advance to break after completing a focus block
-                    switchToBreak()
-                } else {
-                    // Advance to next focus session after break
-                    switchToFocus()
-                }
-            }
-        }
-        .alert("App Blocking Enabled", isPresented: $showBlockingNotice) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Distracting apps will be blocked during your focus session to help you stay on task.")
         }
         .onDisappear {
-            timer?.invalidate()
-            if timerRunning {
-                blockingManager.stopBlocking()
-            }
-            ambientSoundManager.stopAllSounds(fadeOut: true)
+            cleanup()
+        }
+        .sheet(isPresented: $showingCompletionSheet) {
+            SessionCompletionView(
+                task: task,
+                completedMinutes: Int(task.blockMinutes),
+                focusMode: focusMode
+            )
         }
     }
     
-    // MARK: - Timer Functions
+    private var timerProgress: Double {
+        let total = currentPhase == .focus ? Double(task.blockMinutes * 60) : Double(task.breakMinutes * 60)
+        guard total > 0 else { return 0 }
+        return 1.0 - (Double(timeRemaining) / total)
+    }
     
-    private func initializeTimer() {
-        let duration = currentPhase == .focus ? task.blockMinutes : task.breakMinutes
-        timeRemaining = Int(duration * 60)
+    private func setupTimer() {
+        timeRemaining = Int(task.blockMinutes * 60)
+        environmentManager.updateForTimeOfDay()
+        
+        // Load ambient sound if available
+        if let sound = soundManager.soundForFocusMode(focusMode) {
+            currentSound = sound
+        }
+    }
+    
+    private func toggleTimer() {
+        if timerRunning {
+            pauseTimer()
+        } else {
+            startTimer()
+        }
     }
     
     private func startTimer() {
         timerRunning = true
-        isPaused = false
         
-        // Start app blocking if enabled and in focus mode
-        if currentPhase == .focus && blockingManager.isBlockingEnabled {
-            blockingManager.startBlocking()
-            
-            // Show notice first time only
-            if completedIntervals == 0 && !showBlockingNotice {
-                showBlockingNotice = true
-            }
-        }
-        
-        // Start ambient audio for focus sessions
-        if currentPhase == .focus {
-            startAmbientAudio()
+        if let sound = currentSound, !soundManager.isPlaying {
+            soundManager.play(sound: sound)
         }
         
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             if timeRemaining > 0 {
                 timeRemaining -= 1
-                
-                // If this is a focus phase, update the elapsed time
-                if currentPhase == .focus {
-                    totalTimeElapsed += 1
-                }
             } else {
-                // Timer finished
-                timerRunning = false
-                timer?.invalidate()
-                timer = nil
-                
-                // Stop app blocking if in break mode
-                if currentPhase == .breakTime {
-                    blockingManager.stopBlocking()
-                }
-                
-                // Show completion dialog
-                showCompletionSheet = true
+                handlePhaseComplete()
             }
         }
     }
     
     private func pauseTimer() {
         timerRunning = false
-        isPaused = true
         timer?.invalidate()
         timer = nil
-        
-        // Pause ambient audio
-        if currentPhase == .focus {
-            ambientSoundManager.stopAllSounds(fadeOut: true)
-        }
+        soundManager.stop()
     }
     
-    private func stopTimer() {
+    private func handlePhaseComplete() {
         pauseTimer()
-        isPaused = false
-    }
-    
-    private func resetTimer() {
-        initializeTimer()
-    }
-    
-    private func skipToNextPhase() {
-        stopTimer()
+        HapticStyle.success.trigger()
         
         if currentPhase == .focus {
-            // Calculate progress for partial completion
-            let fullBlockSeconds = Int(task.blockMinutes * 60)
-            let completedSeconds = fullBlockSeconds - timeRemaining
-            let completedMinutes = Int64(completedSeconds / 60)
+            // Update task progress
+            let completedMinutes = task.blockMinutes
+            taskViewModel.updateTaskProgress(task, completedMinutes: completedMinutes)
             
-            if completedMinutes > 0 {
-                // Update task progress based on completed time
-                taskViewModel.updateTaskProgress(task, completedMinutes: completedMinutes)
-            }
+            // Switch to break
+            currentPhase = .rest
+            timeRemaining = Int(task.breakMinutes * 60)
             
-            // Stop app blocking
-            blockingManager.stopBlocking()
-            
-            switchToBreak()
+            // Show notification (NotificationManager not implemented yet)
+            // NotificationManager.shared.scheduleSessionComplete(duration: Int(completedMinutes))
         } else {
-            switchToFocus()
+            // Complete interval
+            completedIntervals += 1
+            
+            // Check if task is complete
+            if task.completionPercentage >= 100 {
+                completeSession()
+            } else {
+                // Start next focus interval
+                currentPhase = .focus
+                timeRemaining = Int(task.blockMinutes * 60)
+            }
+        }
+        
+        // Auto-start next phase
+        if !task.isCompleted {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                startTimer()
+            }
         }
     }
     
-    private func switchToFocus() {
-        currentPhase = .focus
-        completedIntervals += 1
-        resetTimer()
+    private func skipPhase() {
+        HapticStyle.light.trigger()
+        handlePhaseComplete()
     }
     
-    private func switchToBreak() {
-        currentPhase = .breakTime
-        resetTimer()
+    private func completeSession() {
+        pauseTimer()
+        blockingManager.stopBlocking()
+        showingCompletionSheet = true
+    }
+    
+    private func handleExit() {
+        // Show confirmation if timer is running
+        if timerRunning {
+            pauseTimer()
+            // Could show alert here
+        }
         
-        // Stop ambient sounds during break
-        ambientSoundManager.stopAllSounds(fadeOut: true)
+        cleanup()
+        dismiss()
     }
     
-    private func calculateTotalIntervals() -> Int {
-        // Calculate approximately how many focus intervals are needed
-        // for the total task based on block minutes
-        return max(1, Int(ceil(Double(task.totalMinutes) / Double(task.blockMinutes))))
+    private func cleanup() {
+        timer?.invalidate()
+        timer = nil
+        soundManager.stop()
+        blockingManager.stopBlocking()
     }
     
-    private func calculateProgress() -> Double {
-        let total = currentPhase == .focus ? task.blockMinutes * 60 : task.breakMinutes * 60
-        return Double(total - Int64(timeRemaining)) / Double(total)
+    private func toggleSound() {
+        if soundManager.isPlaying {
+            soundManager.stop()
+        } else if let sound = currentSound {
+            soundManager.play(sound: sound)
+        }
+    }
+    
+    private func startBlockingIfEnabled() {
+        if blockingManager.isBlockingEnabled {
+            blockingManager.startBlocking()
+        }
     }
     
     private func formatTime(_ seconds: Int) -> String {
@@ -413,54 +294,142 @@ struct TimerView: View {
         return String(format: "%02d:%02d", minutes, remainingSeconds)
     }
     
-    // MARK: - Ambient Audio Functions
-    
-    private func setupAmbientAudio() {
-        // Set initial theme-based ambient sound if available
-        if let ambientSoundName = environmentManager.currentTheme.ambientSoundName,
-           let sound = AmbientSound.library.first(where: { $0.fileName == ambientSoundName }) {
-            // Preload the sound but don't play yet
-            ambientSoundManager.preloadSound(sound.fileName)
+    private func getMotivationalText() -> String {
+        if currentPhase == .rest {
+            return "Take a deep breath"
         }
-    }
-    
-    private func startAmbientAudio() {
-        // Play ambient sound that matches current environmental theme
-        if let ambientSoundName = environmentManager.currentTheme.ambientSoundName,
-           let sound = AmbientSound.library.first(where: { $0.fileName == ambientSoundName }) {
-            ambientSoundManager.playSound(sound, fadeIn: true)
-        } else {
-            // Fallback to default focus sounds
-            if let defaultSound = AmbientSound.library.first(where: { $0.name == "White Noise" && !$0.isPremium }) {
-                ambientSoundManager.playSound(defaultSound, fadeIn: true)
-            }
+        
+        switch focusMode {
+        case .deepWork:
+            return "Stay in the zone"
+        case .creativeFlow:
+            return "Let creativity flow"
+        case .learning:
+            return "Absorb and understand"
+        case .quickSprint:
+            return "Push through!"
+        case .mindfulFocus:
+            return "Be present"
         }
     }
 }
 
-// MARK: - Supporting Views
-
-// Circular progress indicator
-struct CircularProgressView: View {
-    let progress: Double
-    let lineWidth: CGFloat
-    let primaryColor: Color
-    let secondaryColor: Color
+// MARK: - Session Completion View
+struct SessionCompletionView: View {
+    let task: TaskEntity
+    let completedMinutes: Int
+    let focusMode: FocusMode
+    
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var taskViewModel: TaskViewModel
     
     var body: some View {
         ZStack {
-            // Background circle
-            Circle()
-                .stroke(lineWidth: lineWidth)
-                .foregroundColor(secondaryColor)
+            // Background gradient
+            LinearGradient(
+                colors: focusMode.gradientColors,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
             
-            // Progress circle
-            Circle()
-                .trim(from: 0, to: CGFloat(min(progress, 1.0)))
-                .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                .foregroundColor(primaryColor)
-                .rotationEffect(.degrees(-90))
-                .animation(.easeInOut, value: progress)
+            VStack(spacing: 40) {
+                Spacer()
+                
+                // Success icon
+                ZStack {
+                    Circle()
+                        .fill(Color.white.opacity(0.2))
+                        .frame(width: 120, height: 120)
+                    
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 80))
+                        .foregroundColor(.white)
+                }
+                
+                VStack(spacing: 16) {
+                    Text("Great Work!")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Text("You focused for \(completedMinutes) minutes")
+                        .font(.title3)
+                        .foregroundColor(.white.opacity(0.8))
+                }
+                
+                // Stats
+                HStack(spacing: 40) {
+                    VStack(spacing: 8) {
+                        Text("\(taskViewModel.todayMinutes)")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        Text("Minutes Today")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                    
+                    VStack(spacing: 8) {
+                        Text("\(taskViewModel.currentStreak)")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        Text("Day Streak")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.white.opacity(0.2))
+                )
+                
+                Spacer()
+                
+                // Action buttons
+                VStack(spacing: 16) {
+                    Button(action: startAnotherSession) {
+                        Text("Start Another Session")
+                            .font(.headline)
+                            .foregroundColor(.black)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                Capsule()
+                                    .fill(Color.white)
+                            )
+                    }
+                    
+                    Button(action: { dismiss() }) {
+                        Text("Done")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                    }
+                }
+                .padding(.horizontal, 40)
+                .padding(.bottom, 40)
+            }
         }
     }
+    
+    private func startAnotherSession() {
+        dismiss()
+        // Navigate back to home for new session
+    }
+}
+
+#Preview {
+    TimerView(task: {
+        let context = PersistenceController.preview.container.viewContext
+        let task = TaskEntity(context: context)
+        task.title = "Study Session"
+        task.blockMinutes = 25
+        task.breakMinutes = 5
+        task.totalMinutes = 50
+        return task
+    }(), focusMode: .learning)
+        .environmentObject(TaskViewModel(context: PersistenceController.preview.container.viewContext))
+        .environmentObject(AppBlockingManager())
 }
