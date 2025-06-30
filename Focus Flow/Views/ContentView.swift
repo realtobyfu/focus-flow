@@ -41,6 +41,7 @@ struct ContentView: View {
         .sheet(isPresented: $showingAddTask) {
             AddTaskView()
         }
+        .preferredColorScheme(.light)
     }
 }
 
@@ -80,6 +81,7 @@ struct StatisticsView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Focus Distribution")
                             .font(.headline)
+                            .foregroundColor(Color(red: 0.3, green: 0.25, blue: 0.2))
                             .padding(.horizontal)
                         
                         ForEach(FocusMode.allCases, id: \.self) { mode in
@@ -90,12 +92,13 @@ struct StatisticsView: View {
                                 
                                 Text(mode.displayName)
                                     .font(.subheadline)
+                                    .foregroundColor(Color(red: 0.3, green: 0.25, blue: 0.2))
                                 
                                 Spacer()
                                 
                                 Text("\(taskViewModel.minutesForMode(mode)) min")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(Color(red: 0.5, green: 0.4, blue: 0.35))
                             }
                             .padding(.horizontal)
                         }

@@ -58,18 +58,17 @@ struct HomeView: View {
                 }
             }
             .navigationBarHidden(true)
-            .navigationDestination(isPresented: $navigateToTimer) {
-                if let activeTask = taskViewModel.activeTask {
-                    TimerView(task: activeTask, focusMode: getFocusMode())
-                        .navigationBarHidden(true)
-                }
-            }
         }
         .sheet(isPresented: $showingTimeSelector) {
             TimeSelector(selectedMinutes: $selectedMinutes)
         }
         .sheet(isPresented: $showingTagSelector) {
             TagSelector(selectedTag: $selectedTag)
+        }
+        .fullScreenCover(isPresented: $navigateToTimer) {
+            if let activeTask = taskViewModel.activeTask {
+                TimerView(task: activeTask, focusMode: getFocusMode())
+            }
         }
         .onAppear {
             aiRecommender.analyzeAndRecommend()

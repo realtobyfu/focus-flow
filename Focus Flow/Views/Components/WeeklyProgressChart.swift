@@ -42,7 +42,7 @@ struct WeeklyProgressChart: View {
                 
                 Text("Minutes of focused work")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(red: 0.5, green: 0.4, blue: 0.35))
                 
                 Spacer()
                 
@@ -83,7 +83,7 @@ struct BarColumn: View {
             if minutes > 0 {
                 Text("\(minutes)")
                     .font(.system(size: 10))
-                    .foregroundColor(isToday ? themeColor : .secondary)
+                    .foregroundColor(isToday ? themeColor : Color(red: 0.5, green: 0.4, blue: 0.35))
             }
             
             // Bar
@@ -94,7 +94,7 @@ struct BarColumn: View {
             // Day label
             Text(day)
                 .font(.caption)
-                .foregroundColor(isToday ? themeColor : .secondary)
+                .foregroundColor(isToday ? themeColor : Color(red: 0.5, green: 0.4, blue: 0.35))
                 .fontWeight(isToday ? .bold : .regular)
         }
         .frame(maxHeight: 180, alignment: .bottom)

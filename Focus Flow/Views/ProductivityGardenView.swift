@@ -532,7 +532,22 @@ struct PlantStoreView: View {
                             cost: plantInfo.cost,
                             canAfford: gardenManager.garden.seeds >= plantInfo.cost
                         ) {
-                            // Plant new seed functionality
+                            // Find the next available slot
+                            let nextSlot = gardenManager.plants.count
+                            
+                            // Map plant name to PlantType
+                            let plantType: PlantType = {
+                                switch plantInfo.name {
+                                case "Sunflower": return .defaultPlant
+                                case "Rose": return .focusTree
+                                case "Tulip": return .creativeBush
+                                case "Cactus": return .learningVine
+                                case "Bonsai": return .mindfulLotus
+                                default: return .defaultPlant
+                                }
+                            }()
+                            
+                            gardenManager.plantSeed(type: plantType, in: nextSlot)
                             dismiss()
                         }
                     }

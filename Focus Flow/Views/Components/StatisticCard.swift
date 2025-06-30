@@ -24,12 +24,12 @@ struct StatisticCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(red: 0.5, green: 0.4, blue: 0.35))
                 
                 Text(value)
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundColor(Color("2C3E50"))
+                    .foregroundColor(Color(red: 0.3, green: 0.25, blue: 0.2))
             }
             
             Spacer()
@@ -71,7 +71,7 @@ struct StatCircle: View {
             
             Text(label)
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundColor(Color(red: 0.5, green: 0.4, blue: 0.35))
                 .padding(.top, 5)
         }
         .frame(maxWidth: .infinity)

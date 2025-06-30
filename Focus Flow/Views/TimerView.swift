@@ -17,6 +17,7 @@ struct TimerView: View {
     @State private var completedIntervals = 0
     @State private var showingCompletionSheet = false
     @State private var currentSound: AmbientSound?
+    @State private var showingExitConfirmation = false
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
@@ -174,6 +175,15 @@ struct TimerView: View {
                 focusMode: focusMode
             )
         }
+        .alert("Exit Focus Session?", isPresented: $showingExitConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Exit", role: .destructive) {
+                cleanup()
+                dismiss()
+            }
+        } message: {
+            Text("Are you sure you want to exit? Your progress will be reset.")
+        }
     }
     
     private var timerProgress: Double {
@@ -295,14 +305,14 @@ struct TimerView: View {
     }
     
     private func handleExit() {
-        // Show confirmation if timer is running
-        if timerRunning {
+        // Show confirmation if timer is running or time has been spent
+        if timerRunning || (timeRemaining < Int(task.blockMinutes * 60)) {
             pauseTimer()
-            // Could show alert here
+            showingExitConfirmation = true
+        } else {
+            cleanup()
+            dismiss()
         }
-        
-        cleanup()
-        dismiss()
     }
     
     private func cleanup() {

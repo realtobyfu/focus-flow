@@ -542,7 +542,7 @@ struct Achievement: Identifiable, Codable, Equatable, Hashable {
             id: "first_session",
             title: "First Steps",
             description: "Complete your first focus session",
-            icon: "🌱",
+            icon: "leaf.arrow.circlepath",
             experienceReward: 50,
             requirement: .firstSession
         ),
