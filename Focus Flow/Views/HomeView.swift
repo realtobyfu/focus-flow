@@ -140,7 +140,7 @@ struct TimeSelector: View {
                                         Text("\(minutes)")
                                             .font(.title2)
                                             .fontWeight(selectedMinutes == minutes ? .bold : .regular)
-                                            .foregroundColor(selectedMinutes == minutes ? .orange : .primary)
+                                            .foregroundColor(selectedMinutes == minutes ? .orange : Color(red: 0.3, green: 0.25, blue: 0.2))
                                         
                                         Spacer()
                                         
@@ -216,7 +216,7 @@ struct TagSelector: View {
                                             .foregroundColor(.green)
                                     }
                                 }
-                                .foregroundColor(.primary)
+                                .foregroundColor(Color(red: 0.3, green: 0.25, blue: 0.2))
                                 .padding()
                                 .background(
                                     RoundedRectangle(cornerRadius: 20)
