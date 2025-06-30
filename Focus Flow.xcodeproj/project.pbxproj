@@ -38,6 +38,8 @@
 		3E376BEB2E106C0F004C0E81 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E376BC52E106C0F004C0E81 /* SettingsView.swift */; };
 		3E376BEC2E106C0F004C0E81 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E376BC22E106C0F004C0E81 /* Onboarding.swift */; };
 		3E376BED2E106C0F004C0E81 /* AdvancedAppBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E376BA62E106C0F004C0E81 /* AdvancedAppBlockingManager.swift */; };
+		3EB2F1D92E118D2E00C802A6 /* MacOSAppBlocker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB2F1D82E118D2E00C802A6 /* MacOSAppBlocker.swift */; };
+		3EB2F1DD2E118D9400C802A6 /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB2F1DC2E118D9400C802A6 /* ThemeSettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,6 +92,8 @@
 		3E376BCA2E106C0F004C0E81 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3E376BCB2E106C0F004C0E81 /* Focus_Flow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Focus_Flow.entitlements; sourceTree = "<group>"; };
 		3E376BCE2E106C0F004C0E81 /* Focus_Flow.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Focus_Flow.xcdatamodel; sourceTree = "<group>"; };
+		3EB2F1D82E118D2E00C802A6 /* MacOSAppBlocker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSAppBlocker.swift; sourceTree = "<group>"; };
+		3EB2F1DC2E118D9400C802A6 /* ThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsView.swift; sourceTree = "<group>"; };
 		3EB61F9D2D74D2C200B69DB7 /* Focus Flow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Focus Flow.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EB61FB32D74D2C600B69DB7 /* Focus FlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Focus FlowTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EB61FBD2D74D2C600B69DB7 /* Focus FlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Focus FlowUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -148,6 +152,7 @@
 				3E376BAF2E106C0F004C0E81 /* ProductivityGardenManager.swift */,
 				3E376BB02E106C0F004C0E81 /* ScreenTimeManager.swift */,
 				3E376BB12E106C0F004C0E81 /* StatisticsManager.swift */,
+				3EB2F1D82E118D2E00C802A6 /* MacOSAppBlocker.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -190,6 +195,7 @@
 		3E376BC72E106C0F004C0E81 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3EB2F1DC2E118D9400C802A6 /* ThemeSettingsView.swift */,
 				3E376BBD2E106C0F004C0E81 /* Components */,
 				3E376BBE2E106C0F004C0E81 /* AddTaskView.swift */,
 				3E376BBF2E106C0F004C0E81 /* ContentView.swift */,
@@ -407,11 +413,13 @@
 				3E376BDE2E106C0F004C0E81 /* DesignSystem.swift in Sources */,
 				3E376BDF2E106C0F004C0E81 /* EnvironmentalThemeManager.swift in Sources */,
 				3E376BE02E106C0F004C0E81 /* AppTheme.swift in Sources */,
+				3EB2F1DD2E118D9400C802A6 /* ThemeSettingsView.swift in Sources */,
 				3E376BE12E106C0F004C0E81 /* PremiumStore.swift in Sources */,
 				3E376BE22E106C0F004C0E81 /* WeeklyProgressChart.swift in Sources */,
 				3E376BE32E106C0F004C0E81 /* StatisticsManager.swift in Sources */,
 				3E376BE42E106C0F004C0E81 /* AddTaskView.swift in Sources */,
 				3E376BE52E106C0F004C0E81 /* ScreenTimeManager.swift in Sources */,
+				3EB2F1D92E118D2E00C802A6 /* MacOSAppBlocker.swift in Sources */,
 				3E376BE62E106C0F004C0E81 /* StatisticCard.swift in Sources */,
 				3E376BE72E106C0F004C0E81 /* TaskViewModel.swift in Sources */,
 				3E376BE82E106C0F004C0E81 /* ContentView.swift in Sources */,

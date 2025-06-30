@@ -96,11 +96,13 @@ struct SettingsView: View {
                 
                 // Appearance
                 Section("Appearance") {
-                    HStack {
-                        Text("Theme")
-                        Spacer()
-                        Text("Warm")
-                            .foregroundColor(.secondary)
+                    NavigationLink(destination: ThemeSettingsView()) {
+                        HStack {
+                            Label("Theme", systemImage: "paintbrush.fill")
+                            Spacer()
+                            Text(getCurrentThemeName())
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
                 
@@ -171,6 +173,16 @@ struct SettingsView: View {
     private func requestReview() {
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
             SKStoreReviewController.requestReview(in: scene)
+        }
+    }
+    
+    private func getCurrentThemeName() -> String {
+        let themeMode = UserDefaults.standard.string(forKey: "themeMode") ?? "automatic"
+        if themeMode == "automatic" {
+            return "Automatic"
+        } else {
+            let selectedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? "morningMist"
+            return EnvironmentalTheme.allThemes.first { $0.id == selectedTheme }?.name ?? "Morning Mist"
         }
     }
 }

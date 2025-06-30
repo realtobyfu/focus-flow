@@ -85,18 +85,22 @@ class AppBlockingManager: ObservableObject {
     // Start blocking apps during a focus session
     func startBlocking() {
         if isBlockingEnabled {
-            // In a real app, this would use the appropriate APIs
-            // to restrict app usage. For macOS, this might use
-            // Screen Time API or a similar approach
+            #if os(macOS)
+            startBlockingMacOS()
+            #else
             print("Blocking apps started")
+            #endif
         }
     }
     
     // Stop blocking apps
     func stopBlocking() {
         if isBlockingEnabled {
-            // Restore normal app access
+            #if os(macOS)
+            stopBlockingMacOS()
+            #else
             print("Blocking apps stopped")
+            #endif
         }
     }
     

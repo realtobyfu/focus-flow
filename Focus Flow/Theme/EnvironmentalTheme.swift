@@ -2,12 +2,18 @@ import SwiftUI
 
 // MARK: - Environmental Theme System
 struct EnvironmentalTheme: Identifiable {
-    let id = UUID()
+    let id: String
     let name: String
+    let timeOfDay: String
     let gradients: [LinearGradient]
     let particleEffects: ParticleSystem
     let ambientSounds: [String]
     let unlockRequirement: UnlockRequirement
+    
+    // Convenience property for backward compatibility
+    var colors: [Color] {
+        return gradientColors
+    }
     
     // UI configuration properties
     var hasParticles: Bool {
@@ -61,7 +67,9 @@ struct EnvironmentalTheme: Identifiable {
     
     // Static theme definitions
     static let cosmicFocus = EnvironmentalTheme(
+        id: "cosmicFocus",
         name: "Cosmic Focus",
+        timeOfDay: "Deep Work",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "30cfd0"), Color(hex: "330867")],
@@ -75,7 +83,9 @@ struct EnvironmentalTheme: Identifiable {
     )
     
     static let auroraBorealis = EnvironmentalTheme(
+        id: "auroraBorealis",
         name: "Aurora Borealis",
+        timeOfDay: "Creative Flow",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "667eea"), Color(hex: "764ba2")],
@@ -89,7 +99,9 @@ struct EnvironmentalTheme: Identifiable {
     )
     
     static let tranquilLibrary = EnvironmentalTheme(
+        id: "tranquilLibrary",
         name: "Tranquil Library",
+        timeOfDay: "Learning",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "8E9EAB"), Color(hex: "EEF2F3")],
@@ -103,7 +115,9 @@ struct EnvironmentalTheme: Identifiable {
     )
     
     static let energyBurst = EnvironmentalTheme(
+        id: "energyBurst",
         name: "Energy Burst",
+        timeOfDay: "Quick Sprint",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "fa709a"), Color(hex: "fee140")],
@@ -117,7 +131,9 @@ struct EnvironmentalTheme: Identifiable {
     )
     
     static let zenGarden = EnvironmentalTheme(
+        id: "zenGarden",
         name: "Zen Garden",
+        timeOfDay: "Mindful Focus",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "134E5E"), Color(hex: "71B280")],
@@ -132,7 +148,9 @@ struct EnvironmentalTheme: Identifiable {
     
     // Time-based themes
     static let morningMist = EnvironmentalTheme(
+        id: "morningMist",
         name: "Morning Mist",
+        timeOfDay: "5:00 AM - 9:00 AM",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "F8B500"), Color(hex: "fceabb")],
@@ -146,7 +164,9 @@ struct EnvironmentalTheme: Identifiable {
     )
     
     static let productiveSky = EnvironmentalTheme(
+        id: "productiveSky",
         name: "Productive Sky",
+        timeOfDay: "9:00 AM - 12:00 PM",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "56CCF2"), Color(hex: "2F80ED")],
@@ -160,7 +180,9 @@ struct EnvironmentalTheme: Identifiable {
     )
     
     static let afternoonFocus = EnvironmentalTheme(
+        id: "afternoonFocus",
         name: "Afternoon Focus",
+        timeOfDay: "12:00 PM - 5:00 PM",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "FDBB2D"), Color(hex: "22C1C3")],
@@ -174,7 +196,9 @@ struct EnvironmentalTheme: Identifiable {
     )
     
     static let eveningGlow = EnvironmentalTheme(
+        id: "eveningGlow",
         name: "Evening Glow",
+        timeOfDay: "5:00 PM - 9:00 PM",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "ee9ca7"), Color(hex: "ffdde1")],
@@ -188,7 +212,9 @@ struct EnvironmentalTheme: Identifiable {
     )
     
     static let nighttimeSerenity = EnvironmentalTheme(
+        id: "nighttimeSerenity",
         name: "Nighttime Serenity",
+        timeOfDay: "9:00 PM - 5:00 AM",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "141E30"), Color(hex: "243B55")],
@@ -200,6 +226,20 @@ struct EnvironmentalTheme: Identifiable {
         ambientSounds: ["night_sounds"],
         unlockRequirement: .sessionsCompleted(0)
     )
+    
+    // All available themes
+    static let allThemes: [EnvironmentalTheme] = [
+        morningMist,
+        productiveSky,
+        afternoonFocus,
+        eveningGlow,
+        nighttimeSerenity,
+        cosmicFocus,
+        auroraBorealis,
+        tranquilLibrary,
+        energyBurst,
+        zenGarden
+    ]
 }
 
 // Particle system configuration
@@ -279,7 +319,9 @@ enum UnlockRequirement {
 // Example themes
 let environmentalThemes: [EnvironmentalTheme] = [
     EnvironmentalTheme(
+        id: "auroraExample",
         name: "Aurora Borealis",
+        timeOfDay: "Creative Flow",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "667eea"), Color(hex: "764ba2")],
@@ -292,7 +334,9 @@ let environmentalThemes: [EnvironmentalTheme] = [
         unlockRequirement: .sessionsCompleted(5)
     ),
     EnvironmentalTheme(
+        id: "underwaterSanctuary",
         name: "Underwater Sanctuary",
+        timeOfDay: "Deep Focus",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "4facfe"), Color(hex: "00f2fe")],
@@ -305,7 +349,9 @@ let environmentalThemes: [EnvironmentalTheme] = [
         unlockRequirement: .hoursOfFocusTime(10)
     ),
     EnvironmentalTheme(
+        id: "mountainPeak",
         name: "Mountain Peak",
+        timeOfDay: "Adventure Mode",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "fa709a"), Color(hex: "fee140")],
@@ -318,7 +364,9 @@ let environmentalThemes: [EnvironmentalTheme] = [
         unlockRequirement: .sessionsCompleted(10)
     ),
     EnvironmentalTheme(
+        id: "cosmicJourney",
         name: "Cosmic Journey",
+        timeOfDay: "Night Focus",
         gradients: [
             LinearGradient(
                 colors: [Color(hex: "30cfd0"), Color(hex: "330867")],

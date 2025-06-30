@@ -340,11 +340,11 @@ struct HarvestReward {
 }
 
 enum GrowthStage: String, CaseIterable {
-    case seedling = "<1"
-    case young = "<?"
-    case mature = "<3"
-    case blooming = "<8"
-    case harvestable = "<N"
+    case seedling = "Seedling"
+    case young = "Young"
+    case mature = "Mature"
+    case blooming = "Blooming"
+    case harvestable = "Harvestable"
     
     var description: String {
         switch self {
@@ -414,12 +414,12 @@ enum PlantType: String, CaseIterable, Codable {
     
     var icon: String {
         switch self {
-        case .defaultPlant: return "<1"
-        case .focusTree: return "<3"
-        case .creativeBush: return "<:"
-        case .learningVine: return "<C"
-        case .speedFlower: return "bolt.fill"
-        case .mindfulLotus: return "leaf.fill"
+        case .defaultPlant: return "🌱"
+        case .focusTree: return "🌳"
+        case .creativeBush: return "🌿"
+        case .learningVine: return "🌿"
+        case .speedFlower: return "⚡"
+        case .mindfulLotus: return "🪷"
         }
     }
     
@@ -542,7 +542,7 @@ struct Achievement: Identifiable, Codable, Equatable, Hashable {
             id: "first_session",
             title: "First Steps",
             description: "Complete your first focus session",
-            icon: "<1",
+            icon: "🌱",
             experienceReward: 50,
             requirement: .firstSession
         ),
@@ -558,7 +558,7 @@ struct Achievement: Identifiable, Codable, Equatable, Hashable {
             id: "streak_7",
             title: "Week Warrior",
             description: "Maintain a 7-day focus streak",
-            icon: "=%",
+            icon: "flame.fill",
             experienceReward: 200,
             requirement: .streak(days: 7)
         ),
@@ -574,7 +574,7 @@ struct Achievement: Identifiable, Codable, Equatable, Hashable {
             id: "first_harvest",
             title: "Green Thumb",
             description: "Harvest your first plant",
-            icon: "<>",
+            icon: "leaf.fill",
             experienceReward: 150,
             requirement: .plantGrowth(count: 1)
         ),
@@ -582,7 +582,7 @@ struct Achievement: Identifiable, Codable, Equatable, Hashable {
             id: "garden_level_5",
             title: "Garden Guardian",
             description: "Reach garden level 5",
-            icon: "<;",
+            icon: "crown.fill",
             experienceReward: 250,
             requirement: .gardenLevel(level: 5)
         )

@@ -611,3 +611,8 @@ extension Achievement {
         return title
     }
 }
+
+#Preview {
+    ProductivityGardenView()
+        .environmentObject(ProductivityGardenManager())
+}

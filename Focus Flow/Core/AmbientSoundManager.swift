@@ -46,6 +46,7 @@ class AmbientSoundManager: ObservableObject {
         
         guard let url = Bundle.main.url(forResource: sound.fileName, withExtension: "m4a") else {
             print("Sound file not found: \(sound.fileName)")
+            showMissingSoundAlert(for: sound)
             return
         }
         
@@ -102,7 +103,10 @@ class AmbientSoundManager: ObservableObject {
     
     func addSound(_ sound: AmbientSound) {
         guard !selectedSounds.contains(sound.id) else { return }
-        guard let url = Bundle.main.url(forResource: sound.fileName, withExtension: "m4a") else { return }
+        guard let url = Bundle.main.url(forResource: sound.fileName, withExtension: "m4a") else {
+            showMissingSoundAlert(for: sound)
+            return
+        }
         
         do {
             let player = try AVAudioPlayer(contentsOf: url)
@@ -201,6 +205,28 @@ class AmbientSoundManager: ObservableObject {
     private func preloadCommonSounds() {
         let commonSounds = ["rain_forest", "ocean_waves", "white_noise", "coffee_shop", "thunderstorm", "birds_chirping"]
         commonSounds.forEach { preloadSound($0) }
+    }
+    
+    private func showMissingSoundAlert(for sound: AmbientSound) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: .showMissingSoundAlert,
+                object: nil,
+                userInfo: ["sound": sound]
+            )
+        }
+    }
+    
+    func checkAvailableSounds() -> [AmbientSound] {
+        return AmbientSound.library.filter { sound in
+            Bundle.main.url(forResource: sound.fileName, withExtension: "m4a") != nil
+        }
+    }
+    
+    func getMissingSounds() -> [AmbientSound] {
+        return AmbientSound.library.filter { sound in
+            Bundle.main.url(forResource: sound.fileName, withExtension: "m4a") == nil
+        }
     }
     
     // MARK: - Focus Mode Integration
@@ -470,4 +496,7 @@ struct AmbientMoodSet: Identifiable {
     ]
 }
 
- 
+// MARK: - Notification Extension
+extension Notification.Name {
+    static let showMissingSoundAlert = Notification.Name("showMissingSoundAlert")
+}

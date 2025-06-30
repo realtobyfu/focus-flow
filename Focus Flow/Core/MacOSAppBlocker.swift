@@ -6,8 +6,10 @@
 //
 
 import Foundation
-import AppKit
 import Combine
+
+#if os(macOS)
+import AppKit
 
 /// Handles actual app blocking on macOS using NSWorkspace
 class MacOSAppBlocker: ObservableObject {
@@ -143,3 +145,4 @@ extension AppBlockingManager {
         Self.appBlocker.stopBlocking()
     }
 }
+#endif

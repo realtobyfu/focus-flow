@@ -19,6 +19,14 @@ struct TimerView: View {
     @State private var currentSound: AmbientSound?
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
+    
+    // Timer persistence keys
+    @AppStorage("savedTimeRemaining") private var savedTimeRemaining: Int = 0
+    @AppStorage("savedTimerPhase") private var savedTimerPhase: String = "focus"
+    @AppStorage("savedTaskId") private var savedTaskId: String = ""
+    @AppStorage("savedCompletedIntervals") private var savedCompletedIntervals: Int = 0
+    @AppStorage("timerWasRunning") private var timerWasRunning: Bool = false
     
     enum TimerPhase {
         case focus, rest
@@ -152,6 +160,13 @@ struct TimerView: View {
         .onDisappear {
             cleanup()
         }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .background || newPhase == .inactive {
+                if timerRunning {
+                    saveTimerState()
+                }
+            }
+        }
         .sheet(isPresented: $showingCompletionSheet) {
             SessionCompletionView(
                 task: task,
@@ -168,7 +183,27 @@ struct TimerView: View {
     }
     
     private func setupTimer() {
-        timeRemaining = Int(task.blockMinutes * 60)
+        // Check if we have a saved state for this task
+        if savedTaskId == task.id?.uuidString && savedTimeRemaining > 0 {
+            // Restore saved state
+            timeRemaining = savedTimeRemaining
+            currentPhase = savedTimerPhase == "rest" ? .rest : .focus
+            completedIntervals = savedCompletedIntervals
+            
+            // Clear saved state after restoring
+            clearSavedState()
+            
+            // Auto-resume if timer was running
+            if timerWasRunning {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    startTimer()
+                }
+            }
+        } else {
+            // Fresh start
+            timeRemaining = Int(task.blockMinutes * 60)
+        }
+        
         environmentManager.updateForTimeOfDay()
         
         // Load ambient sound if available
@@ -206,6 +241,9 @@ struct TimerView: View {
         timer?.invalidate()
         timer = nil
         soundManager.stop()
+        
+        // Save current state
+        saveTimerState()
     }
     
     private func handlePhaseComplete() {
@@ -268,10 +306,31 @@ struct TimerView: View {
     }
     
     private func cleanup() {
+        // Save state before cleanup if timer is running
+        if timerRunning {
+            saveTimerState()
+        }
+        
         timer?.invalidate()
         timer = nil
         soundManager.stop()
         blockingManager.stopBlocking()
+    }
+    
+    private func saveTimerState() {
+        savedTaskId = task.id?.uuidString ?? ""
+        savedTimeRemaining = timeRemaining
+        savedTimerPhase = currentPhase == .rest ? "rest" : "focus"
+        savedCompletedIntervals = completedIntervals
+        timerWasRunning = timerRunning
+    }
+    
+    private func clearSavedState() {
+        savedTaskId = ""
+        savedTimeRemaining = 0
+        savedTimerPhase = "focus"
+        savedCompletedIntervals = 0
+        timerWasRunning = false
     }
     
     private func toggleSound() {

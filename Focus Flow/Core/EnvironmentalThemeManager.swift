@@ -5,11 +5,21 @@ import Combine
 class EnvironmentalThemeManager: ObservableObject {
     @Published var currentTheme: EnvironmentalTheme
     @Published var isTransitioning = false
+    @AppStorage("themeMode") private var themeMode: String = "automatic"
+    @AppStorage("selectedTheme") private var selectedTheme: String = "morningMist"
 
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        self.currentTheme = Self.getThemeForCurrentTime()
+        // Initialize currentTheme first with a default value
+        self.currentTheme = .morningMist
+        
+        // Then update it based on settings
+        if themeMode == "manual" {
+            self.currentTheme = EnvironmentalTheme.allThemes.first { $0.id == selectedTheme } ?? .morningMist
+        } else {
+            self.currentTheme = Self.getThemeForCurrentTime()
+        }
         setupTimeBasedUpdates()
     }
 
@@ -23,6 +33,9 @@ class EnvironmentalThemeManager: ObservableObject {
     }
 
     func updateForTimeOfDay() {
+        // Only update if in automatic mode
+        guard themeMode == "automatic" else { return }
+        
         let newTheme = Self.getThemeForCurrentTime()
         if newTheme.id != currentTheme.id {
             withAnimation(.easeInOut(duration: 2)) {
