@@ -19,6 +19,8 @@ struct TimerView: View {
     @State private var currentSound: AmbientSound?
     @State private var showingExitConfirmation = false
     
+    @AppStorage("playAmbientDuringBreaks") private var playAmbientDuringBreaks = false
+    
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     
@@ -233,8 +235,11 @@ struct TimerView: View {
     private func startTimer() {
         timerRunning = true
         
+        // Only play ambient sound during focus phase or if playAmbientDuringBreaks is enabled
         if let sound = currentSound, !soundManager.isPlaying {
-            soundManager.play(sound: sound)
+            if currentPhase == .focus || playAmbientDuringBreaks {
+                soundManager.play(sound: sound)
+            }
         }
         
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
@@ -269,6 +274,11 @@ struct TimerView: View {
             currentPhase = .rest
             timeRemaining = Int(task.breakMinutes * 60)
             
+            // Handle ambient sound for break phase
+            if soundManager.isPlaying && !playAmbientDuringBreaks {
+                soundManager.stop()
+            }
+            
             // Show notification (NotificationManager not implemented yet)
             // NotificationManager.shared.scheduleSessionComplete(duration: Int(completedMinutes))
         } else {
@@ -282,6 +292,11 @@ struct TimerView: View {
                 // Start next focus interval
                 currentPhase = .focus
                 timeRemaining = Int(task.blockMinutes * 60)
+                
+                // Resume ambient sound for focus phase if it was playing before
+                if currentSound != nil && !soundManager.isPlaying {
+                    soundManager.play(sound: currentSound!)
+                }
             }
         }
         

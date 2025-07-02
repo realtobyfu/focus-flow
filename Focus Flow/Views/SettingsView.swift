@@ -7,9 +7,12 @@ struct SettingsView: View {
     
     @AppStorage("userName") private var userName = ""
     @AppStorage("defaultFocusDuration") private var defaultDuration = 25
+    @AppStorage("defaultBreakDuration") private var defaultBreakDuration = 5
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
     @AppStorage("appBlockingEnabled") private var appBlockingEnabled = false
     @AppStorage("ambientSoundsEnabled") private var ambientSoundsEnabled = true
+    @AppStorage("playAmbientDuringBreaks") private var playAmbientDuringBreaks = false
+    @AppStorage("timerNotificationSounds") private var timerNotificationSounds = true
     
     @State private var showingPremiumView = false
     @State private var showingBlockedApps = false
@@ -53,10 +56,21 @@ struct SettingsView: View {
                 // Focus Settings
                 Section("Focus Settings") {
                     HStack {
-                        Label("Default Duration", systemImage: "timer")
+                        Label("Focus Duration", systemImage: "timer")
                         Spacer()
                         Picker("Duration", selection: $defaultDuration) {
-                            ForEach([15, 25, 45, 60, 90], id: \.self) { minutes in
+                            ForEach([15, 20, 25, 30, 45, 50, 60, 90], id: \.self) { minutes in
+                                Text("\(minutes) min").tag(minutes)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    HStack {
+                        Label("Break Duration", systemImage: "pause.circle")
+                        Spacer()
+                        Picker("Break", selection: $defaultBreakDuration) {
+                            ForEach([5, 10, 15], id: \.self) { minutes in
                                 Text("\(minutes) min").tag(minutes)
                             }
                         }
@@ -66,9 +80,24 @@ struct SettingsView: View {
                     Toggle(isOn: $notificationsEnabled) {
                         Label("Notifications", systemImage: "bell.fill")
                     }
-                    
+                }
+                
+                // Sound Settings
+                Section("Sound Settings") {
                     Toggle(isOn: $ambientSoundsEnabled) {
                         Label("Ambient Sounds", systemImage: "speaker.wave.3.fill")
+                    }
+                    
+                    if ambientSoundsEnabled {
+                        Toggle(isOn: $playAmbientDuringBreaks) {
+                            Label("Play During Breaks", systemImage: "speaker.wave.2")
+                                .font(.subheadline)
+                        }
+                        .padding(.leading, 32)
+                    }
+                    
+                    Toggle(isOn: $timerNotificationSounds) {
+                        Label("Timer Sounds", systemImage: "bell.and.waveform.fill")
                     }
                 }
                 

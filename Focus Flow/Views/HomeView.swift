@@ -2,14 +2,17 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var taskViewModel: TaskViewModel
+    @EnvironmentObject var themeManager: EnvironmentalThemeManager
     @StateObject private var aiRecommender = AISessionRecommender()
-    @State private var selectedMinutes: Int = 50
+    @State private var selectedMinutes: Int = 25 // Changed default to 25 minutes
     @State private var selectedTag: String = "Study"
     @State private var timerIsActive = false
     @State private var showingTimerView = false
     @State private var showingTimeSelector = false
     @State private var showingTagSelector = false
     @State private var navigateToTimer = false
+    @State private var animateGradient = false
+    @State private var particleAnimationPhase = 0.0
     @Binding var showingAddTask: Bool
     
     let timeOptions = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90]
@@ -18,41 +21,109 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Warm beige background
-                Color(red: 0.96, green: 0.93, blue: 0.88)
+                // Dynamic theme gradient background
+                if let gradient = themeManager.currentTheme.gradients.first {
+                    gradient
+                        .ignoresSafeArea()
+                        .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: animateGradient)
+                        .onAppear { animateGradient.toggle() }
+                } else {
+                    LinearGradient(
+                        colors: [Color(hex: "667eea"), Color(hex: "764ba2")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                     .ignoresSafeArea()
+                }
+                
+                // Floating particles based on theme
+                if themeManager.currentTheme.hasParticles {
+                    ParticleEffectView(
+                        particleSystem: themeManager.currentTheme.particleEffects,
+                        animationPhase: particleAnimationPhase
+                    )
+                    .allowsHitTesting(false)
+                    .onAppear {
+                        withAnimation(.linear(duration: 20).repeatForever(autoreverses: false)) {
+                            particleAnimationPhase = 1.0
+                        }
+                    }
+                }
                 
                 VStack(spacing: 0) {
                     Spacer()
                     
-                    // Timer Display - Centered and Clickable
-                    VStack(spacing: 16) {
+                    // Timer Display with Glass Morphism
+                    VStack(spacing: 20) {
+                        // Timer Button
                         Button(action: { showingTimeSelector = true }) {
                             Text("\(selectedMinutes):00")
                                 .font(.system(size: AppTheme.timerDisplay, weight: .medium, design: .rounded))
-                                .foregroundColor(Color(red: 0.3, green: 0.25, blue: 0.2))
+                                .foregroundColor(.white)
+                                .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
                         }
+                        .padding(.horizontal, 40)
+                        .padding(.vertical, 20)
+                        .background(
+                            GlassMorphismView()
+                                .clipShape(RoundedRectangle(cornerRadius: 25))
+                        )
                         
+                        // Tag Button
                         Button(action: { showingTagSelector = true }) {
-                            Text(selectedTag)
-                                .font(.title2)
-                                .foregroundColor(Color(red: 0.5, green: 0.4, blue: 0.35))
+                            HStack {
+                                Image(systemName: getFocusMode().icon)
+                                    .font(.title3)
+                                Text(selectedTag)
+                                    .font(.title2)
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 30)
+                            .padding(.vertical, 12)
+                            .background(
+                                GlassMorphismView()
+                                    .clipShape(Capsule())
+                            )
                         }
                     }
+                    .scaleEffect(timerIsActive ? 1.05 : 1.0)
+                    .animation(.easeInOut(duration: 0.3), value: timerIsActive)
                     
                     Spacer()
                     
-                    // Start Button
+                    // Start Button with Glow Effect
                     Button(action: startFocusSession) {
-                        Text("Start Focus")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(width: 180, height: 60)
-                            .background(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .fill(Color(red: 0.4, green: 0.3, blue: 0.25))
-                            )
+                        HStack(spacing: 12) {
+                            Image(systemName: "play.fill")
+                                .font(.title3)
+                            Text("Start Focus")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                        }
+                        .foregroundColor(.white)
+                        .frame(width: 200, height: 65)
+                        .background(
+                            ZStack {
+                                // Glow effect
+                                RoundedRectangle(cornerRadius: 32)
+                                    .fill(getFocusMode().color)
+                                    .blur(radius: 20)
+                                    .opacity(0.6)
+                                
+                                // Main button
+                                RoundedRectangle(cornerRadius: 32)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [getFocusMode().color, getFocusMode().color.opacity(0.8)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                            }
+                        )
+                        .scaleEffect(timerIsActive ? 0.95 : 1.0)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: timerIsActive)
                     }
                     .padding(.bottom, 60)
                 }
@@ -61,9 +132,11 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showingTimeSelector) {
             TimeSelector(selectedMinutes: $selectedMinutes)
+                .environmentObject(themeManager)
         }
         .sheet(isPresented: $showingTagSelector) {
             TagSelector(selectedTag: $selectedTag)
+                .environmentObject(themeManager)
         }
         .fullScreenCover(isPresented: $navigateToTimer) {
             if let activeTask = taskViewModel.activeTask {
@@ -113,18 +186,50 @@ struct HomeView: View {
     }
 }
 
+// MARK: - Glass Morphism View
+struct GlassMorphismView: View {
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 25)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 25)
+                        .stroke(
+                            LinearGradient(
+                                colors: [.white.opacity(0.5), .white.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                )
+        }
+    }
+}
+
 // MARK: - Time Selector Sheet
 struct TimeSelector: View {
     @Binding var selectedMinutes: Int
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var themeManager: EnvironmentalThemeManager
     
     let timeOptions = stride(from: 10, through: 90, by: 5).map { $0 }
     
     var body: some View {
         NavigationView {
             ZStack {
-                Color(red: 0.96, green: 0.93, blue: 0.88)
+                // Theme gradient background
+                if let gradient = themeManager.currentTheme.gradients.first {
+                    gradient
+                        .ignoresSafeArea()
+                } else {
+                    LinearGradient(
+                        colors: [Color(hex: "667eea"), Color(hex: "764ba2")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                     .ignoresSafeArea()
+                }
                 
                 VStack {
                     // Visual time slider representation
@@ -139,16 +244,34 @@ struct TimeSelector: View {
                                         Text("\(minutes)")
                                             .font(.title2)
                                             .fontWeight(selectedMinutes == minutes ? .bold : .regular)
-                                            .foregroundColor(selectedMinutes == minutes ? .orange : Color(red: 0.3, green: 0.25, blue: 0.2))
                                         
                                         Spacer()
                                         
                                         Text("minutes")
                                             .font(.body)
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(.white.opacity(0.7))
+                                        
+                                        if selectedMinutes == minutes {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundColor(.white)
+                                                .font(.title3)
+                                        }
                                     }
-                                    .padding(.horizontal, 30)
-                                    .padding(.vertical, 12)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 25)
+                                    .padding(.vertical, 15)
+                                    .background(
+                                        selectedMinutes == minutes
+                                        ? AnyView(
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .fill(.ultraThinMaterial)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 16)
+                                                        .stroke(.white.opacity(0.3), lineWidth: 1)
+                                                )
+                                        )
+                                        : AnyView(Color.clear)
+                                    )
                                 }
                             }
                         }
@@ -172,37 +295,50 @@ struct TimeSelector: View {
 struct TagSelector: View {
     @Binding var selectedTag: String
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var themeManager: EnvironmentalThemeManager
     
     let tags = [
-        ("Focus", Color.orange),
-        ("Study", Color.teal),
-        ("Work", Color.green),
-        ("Read", Color.yellow),
-        ("Fitness", Color.orange)
+        ("Focus", FocusMode.deepWork),
+        ("Study", FocusMode.learning),
+        ("Work", FocusMode.deepWork),
+        ("Read", FocusMode.mindfulFocus),
+        ("Fitness", FocusMode.quickSprint)
     ]
     
     var body: some View {
         NavigationView {
             ZStack {
-                Color(red: 0.96, green: 0.93, blue: 0.88)
+                // Theme gradient background
+                if let gradient = themeManager.currentTheme.gradients.first {
+                    gradient
+                        .ignoresSafeArea()
+                } else {
+                    LinearGradient(
+                        colors: [Color(hex: "667eea"), Color(hex: "764ba2")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                     .ignoresSafeArea()
+                }
                 
                 VStack(spacing: 20) {
                     Text("Select Tag")
                         .font(.largeTitle)
                         .fontWeight(.bold)
+                        .foregroundColor(.white)
                         .padding(.top, 40)
                     
                     VStack(spacing: 16) {
-                        ForEach(tags, id: \.0) { tag, color in
+                        ForEach(tags, id: \.0) { tag, focusMode in
                             Button(action: {
                                 selectedTag = tag
                                 dismiss()
                             }) {
                                 HStack {
-                                    Circle()
-                                        .fill(color)
-                                        .frame(width: 12, height: 12)
+                                    Image(systemName: focusMode.icon)
+                                        .font(.title3)
+                                        .foregroundColor(focusMode.color)
+                                        .frame(width: 30)
                                     
                                     Text(tag)
                                         .font(.title3)
@@ -211,38 +347,69 @@ struct TagSelector: View {
                                     Spacer()
                                     
                                     if selectedTag == tag {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.green)
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.white)
+                                            .font(.title3)
                                     }
                                 }
-                                .foregroundColor(Color(red: 0.3, green: 0.25, blue: 0.2))
-                                .padding()
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 16)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .fill(selectedTag == tag ? color.opacity(0.2) : Color.white)
+                                    ZStack {
+                                        if selectedTag == tag {
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .fill(focusMode.color.opacity(0.3))
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .stroke(focusMode.color, lineWidth: 2)
+                                                )
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .fill(.ultraThinMaterial)
+                                        }
+                                    }
                                 )
                             }
                         }
                         
-                        // New Tag Button
+                        // New Tag Button with Glass Effect
                         Button(action: {
                             // Add new tag functionality
                         }) {
                             HStack {
-                                Image(systemName: "lock.fill")
-                                    .foregroundColor(.white)
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.title3)
                                 
-                                Text("New Tag")
+                                Text("Create New Tag")
                                     .font(.title3)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.white)
                                 
                                 Spacer()
+                                
+                                Image(systemName: "lock.fill")
+                                    .font(.caption)
+                                    .opacity(0.7)
                             }
-                            .padding()
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
                             .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(Color(red: 0.85, green: 0.5, blue: 0.4))
+                                ZStack {
+                                    // Gradient border
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(
+                                            LinearGradient(
+                                                colors: [.white.opacity(0.6), .white.opacity(0.2)],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ),
+                                            lineWidth: 2
+                                        )
+                                    
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(.ultraThinMaterial)
+                                }
                             )
                         }
                     }

@@ -208,32 +208,60 @@ struct TagSelectionRow: View {
     let color: Color
     let isSelected: Bool
     let action: () -> Void
+    @EnvironmentObject var themeManager: EnvironmentalThemeManager
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 16, height: 16)
+            HStack(spacing: 16) {
+                // Icon with glow effect
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.3))
+                        .frame(width: 32, height: 32)
+                        .blur(radius: isSelected ? 8 : 4)
+                    
+                    Circle()
+                        .fill(color)
+                        .frame(width: 20, height: 20)
+                }
                 
                 Text(name)
                     .font(.body)
-                    .fontWeight(.medium)
+                    .fontWeight(isSelected ? .semibold : .medium)
+                    .foregroundColor(themeManager.currentTheme.name.contains("Dark") || themeManager.currentTheme.name.contains("Night") ? .white : .primary)
                 
                 Spacer()
                 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(color)
+                        .font(.title3)
                 }
             }
-            .foregroundColor(.primary)
-            .padding()
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
             .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(isSelected ? color.opacity(0.2) : Color.white)
+                ZStack {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(color.opacity(0.15))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(color, lineWidth: 2)
+                            )
+                    } else {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                            )
+                    }
+                }
             )
         }
+        .scaleEffect(isSelected ? 1.02 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
     }
 }
 
@@ -264,47 +292,83 @@ struct NewTagView: View {
     @Binding var tagName: String
     @Binding var selectedColor: Color
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var themeManager: EnvironmentalThemeManager
     
     let colors: [Color] = [.red, .orange, .yellow, .green, .blue, .purple, .pink, .brown]
     
     var body: some View {
         NavigationView {
             ZStack {
-                Color(red: 0.96, green: 0.93, blue: 0.88)
+                // Dynamic theme gradient background
+                if let gradient = themeManager.currentTheme.gradients.first {
+                    gradient
+                        .ignoresSafeArea()
+                } else {
+                    LinearGradient(
+                        colors: [Color(hex: "667eea"), Color(hex: "764ba2")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                     .ignoresSafeArea()
+                }
                 
                 VStack(spacing: 30) {
-                    // Tag Name Input
+                    // Tag Name Input with Glass Morphism
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Tag Name")
                             .font(.headline)
+                            .foregroundColor(.white)
                         
                         TextField("Enter tag name", text: $tagName)
                             .font(.body)
+                            .foregroundColor(.white)
                             .padding()
                             .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.white)
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(.ultraThinMaterial)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                    )
                             )
                     }
                     
-                    // Color Selection
-                    VStack(alignment: .leading, spacing: 12) {
+                    // Color Selection with Enhanced UI
+                    VStack(alignment: .leading, spacing: 16) {
                         Text("Select Color")
                             .font(.headline)
+                            .foregroundColor(.white)
                         
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 16) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 20) {
                             ForEach(colors, id: \.self) { color in
                                 Button(action: { selectedColor = color }) {
-                                    Circle()
-                                        .fill(color)
-                                        .frame(width: 60, height: 60)
-                                        .overlay(
-                                            selectedColor == color ?
-                                            Image(systemName: "checkmark")
-                                                .foregroundColor(.primary)
-                                                .font(.headline) : nil
-                                        )
+                                    ZStack {
+                                        // Glow effect for selected color
+                                        if selectedColor == color {
+                                            Circle()
+                                                .fill(color)
+                                                .frame(width: 50, height: 50)
+                                                .blur(radius: 15)
+                                                .opacity(0.6)
+                                        }
+                                        
+                                        Circle()
+                                            .fill(color)
+                                            .frame(width: 50, height: 50)
+                                            .overlay(
+                                                selectedColor == color ?
+                                                Image(systemName: "checkmark")
+                                                    .foregroundColor(.white)
+                                                    .font(.headline)
+                                                    .fontWeight(.bold) : nil
+                                            )
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(selectedColor == color ? Color.white : Color.clear, lineWidth: 3)
+                                            )
+                                    }
+                                    .scaleEffect(selectedColor == color ? 1.1 : 1.0)
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedColor)
                                 }
                             }
                         }
@@ -321,6 +385,7 @@ struct NewTagView: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundColor(.white)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -329,6 +394,7 @@ struct NewTagView: View {
                         dismiss()
                     }
                     .disabled(tagName.isEmpty)
+                    .foregroundColor(.white)
                 }
             }
         }

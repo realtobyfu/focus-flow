@@ -223,6 +223,11 @@ class StatisticsManager: ObservableObject {
         return dailyStats.focusModeDistribution
     }
     
+    func getWeeklyData() -> [CGFloat] {
+        // Return mock data for now, should be replaced with actual weekly data
+        return [45, 60, 30, 90, 75, 120, 85]
+    }
+    
     private func getFocusModeDistribution() -> [Double] {
         let total = dailyStats.focusModeDistribution.values.reduce(0, +)
         guard total > 0 else { return [0.2, 0.2, 0.2, 0.2, 0.2] } // Equal distribution fallback
