@@ -7,6 +7,7 @@ struct TimerView: View {
     
     @EnvironmentObject var taskViewModel: TaskViewModel
     @EnvironmentObject var blockingManager: AppBlockingManager
+    @EnvironmentObject var advancedBlockingManager: AdvancedAppBlockingManager
     @StateObject private var soundManager = AmbientSoundManager()
     @StateObject private var environmentManager = EnvironmentalThemeManager()
     
@@ -315,6 +316,10 @@ struct TimerView: View {
     
     private func completeSession() {
         pauseTimer()
+        // Stop blocking with both managers
+        if #available(iOS 15.0, *) {
+            advancedBlockingManager.stopBlocking()
+        }
         blockingManager.stopBlocking()
         showingCompletionSheet = true
     }
@@ -339,6 +344,10 @@ struct TimerView: View {
         timer?.invalidate()
         timer = nil
         soundManager.stop()
+        // Stop blocking with both managers
+        if #available(iOS 15.0, *) {
+            advancedBlockingManager.stopBlocking()
+        }
         blockingManager.stopBlocking()
     }
     
@@ -367,7 +376,10 @@ struct TimerView: View {
     }
     
     private func startBlockingIfEnabled() {
-        if blockingManager.isBlockingEnabled {
+        // Use AdvancedAppBlockingManager if available on iOS 15+
+        if #available(iOS 15.0, *), advancedBlockingManager.isScreenTimeConfigured {
+            advancedBlockingManager.startBlocking()
+        } else if blockingManager.isBlockingEnabled {
             blockingManager.startBlocking()
         }
     }

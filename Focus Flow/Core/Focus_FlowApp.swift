@@ -16,6 +16,7 @@ struct Focus_FlowApp: App {
     
     // App Blocking Manager
     @StateObject private var blockingManager = AppBlockingManager()
+    @StateObject private var advancedBlockingManager = AdvancedAppBlockingManager()
     
     // Productivity Garden Manager
     @StateObject private var gardenManager = ProductivityGardenManager()
@@ -43,6 +44,7 @@ struct Focus_FlowApp: App {
             }
             .environmentObject(taskViewModel)
             .environmentObject(blockingManager)
+            .environmentObject(advancedBlockingManager)
             .environmentObject(gardenManager)
             .onAppear {
                 if hasSeenOnboarding {

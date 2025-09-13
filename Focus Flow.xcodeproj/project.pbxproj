@@ -166,13 +166,6 @@
 			path = Theme;
 			sourceTree = "<group>";
 		};
-		3E376BB62E106C0F004C0E81 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
 		3E376BB82E106C0F004C0E81 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,7 +216,6 @@
 			children = (
 				3E376BB22E106C0F004C0E81 /* Core */,
 				3E376BB52E106C0F004C0E81 /* Theme */,
-				3E376BB62E106C0F004C0E81 /* Utils */,
 				3E376BB82E106C0F004C0E81 /* ViewModels */,
 				3E376BC72E106C0F004C0E81 /* Views */,
 				3E376BC92E106C0F004C0E81 /* Widgets */,
@@ -602,6 +594,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.tobiasfu.Focus-Flow";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -633,6 +626,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.tobiasfu.Focus-Flow";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;

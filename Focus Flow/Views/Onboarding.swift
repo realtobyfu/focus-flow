@@ -1,4 +1,5 @@
 import SwiftUI
+import FamilyControls
 
 // MARK: - Onboarding Coordinator
 class OnboardingCoordinator: ObservableObject {
@@ -9,7 +10,7 @@ class OnboardingCoordinator: ObservableObject {
     @Published var preferredFocusDuration = 25
     @Published var enableNotifications = false
     @Published var enableAppBlocking = false
-    @Published var selectedAppsToBlock: Set<String> = []
+    @Published var familyActivitySelection = FamilyActivitySelection()
     
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     
@@ -57,6 +58,21 @@ class OnboardingCoordinator: ObservableObject {
         UserDefaults.standard.set(preferredFocusDuration, forKey: "defaultFocusDuration")
         UserDefaults.standard.set(enableNotifications, forKey: "notificationsEnabled")
         UserDefaults.standard.set(enableAppBlocking, forKey: "appBlockingEnabled")
+        
+        // Save FamilyActivitySelection to app group UserDefaults for use by AppBlockingManager
+        if enableAppBlocking && (!familyActivitySelection.applications.isEmpty || !familyActivitySelection.categories.isEmpty) {
+            if let appGroupDefaults = UserDefaults(suiteName: "group.com.tobiasfu.Focus-Flow") {
+                do {
+                    let data = try NSKeyedArchiver.archivedData(withRootObject: familyActivitySelection.applications, requiringSecureCoding: true)
+                    appGroupDefaults.set(data, forKey: "applicationTokensData")
+                    
+                    let categoryData = try NSKeyedArchiver.archivedData(withRootObject: familyActivitySelection.categories, requiringSecureCoding: true)
+                    appGroupDefaults.set(categoryData, forKey: "categoryTokensData")
+                } catch {
+                    print("Failed to save family activity selection: \(error)")
+                }
+            }
+        }
     }
 }
 
@@ -297,15 +313,13 @@ struct PersonalizationPage: View {
                     .focused($isNameFieldFocused)
                 
                 if !coordinator.userName.isEmpty {
-                    Text("Nice to meet you, \\(coordinator.userName)! 👋")
+                    Text("Nice to meet you, \(coordinator.userName)! 👋")
                         .font(AppTheme.Typography.subheadline)
                         .foregroundColor(.white.opacity(0.8))
                         .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
             .padding(.horizontal, 40)
-            
-            Spacer()
             Spacer()
         }
         .onAppear {
@@ -500,15 +514,9 @@ struct PresetButton: View {
 // MARK: - Page 5: App Blocking Setup
 struct AppBlockingSetupPage: View {
     @EnvironmentObject var coordinator: OnboardingCoordinator
+    @StateObject private var appBlockingManager = AdvancedAppBlockingManager()
     @State private var showingPermissionAlert = false
-    
-    let suggestedApps = [
-        ("Instagram", "com.instagram.ios", "person.2.fill"),
-        ("TikTok", "com.zhiliaoapp.musically", "play.rectangle.fill"),
-        ("Twitter", "com.twitter.ios", "bubble.left.fill"),
-        ("Facebook", "com.facebook.Facebook", "person.3.fill"),
-        ("YouTube", "com.google.ios.youtube", "play.tv.fill")
-    ]
+    @State private var showingFamilyActivityPicker = false
     
     var body: some View {
         VStack(spacing: 40) {
@@ -539,7 +547,7 @@ struct AppBlockingSetupPage: View {
                             .font(AppTheme.Typography.headline)
                             .foregroundColor(.white)
                         
-                        Text("Requires Screen Time permissions")
+                        Text(appBlockingManager.isScreenTimeConfigured ? "Screen Time configured" : "Requires Screen Time permissions")
                             .font(AppTheme.Typography.caption)
                             .foregroundColor(.white.opacity(0.7))
                     }
@@ -548,28 +556,51 @@ struct AppBlockingSetupPage: View {
             .toggleStyle(OnboardingToggleStyle())
             .padding(.horizontal, 40)
             .onChange(of: coordinator.enableAppBlocking) { enabled in
-                if enabled {
-                    showingPermissionAlert = true
+                if enabled && !appBlockingManager.isScreenTimeConfigured {
+                    requestScreenTimePermission()
+                } else if enabled && appBlockingManager.isScreenTimeConfigured {
+                    showingFamilyActivityPicker = true
                 }
             }
             
-            // Suggested apps
-            if coordinator.enableAppBlocking {
-                VStack(spacing: 12) {
-                    ForEach(suggestedApps, id: \ .1) { app in
-                        AppBlockingRow(
-                            appName: app.0,
-                            bundleId: app.1,
-                            icon: app.2,
-                            isSelected: coordinator.selectedAppsToBlock.contains(app.1),
-                            action: {
-                                if coordinator.selectedAppsToBlock.contains(app.1) {
-                                    coordinator.selectedAppsToBlock.remove(app.1)
-                                } else {
-                                    coordinator.selectedAppsToBlock.insert(app.1)
-                                }
+            // App selection
+            if coordinator.enableAppBlocking && appBlockingManager.isScreenTimeConfigured {
+                VStack(spacing: 16) {
+                    Button(action: {
+                        showingFamilyActivityPicker = true
+                    }) {
+                        HStack {
+                            Image(systemName: "square.grid.3x3.fill")
+                                .font(.title2)
+                                .foregroundColor(.white)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Select Apps to Block")
+                                    .font(AppTheme.Typography.headline)
+                                    .foregroundColor(.white)
+                                
+                                Text("Choose apps and categories")
+                                    .font(AppTheme.Typography.caption)
+                                    .foregroundColor(.white.opacity(0.7))
                             }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.title3)
+                                .foregroundColor(.white.opacity(0.7))
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.m)
+                                .fill(Color.white.opacity(0.2))
                         )
+                    }
+                    
+                    if !coordinator.familyActivitySelection.applications.isEmpty || !coordinator.familyActivitySelection.categories.isEmpty {
+                        Text("\(coordinator.familyActivitySelection.applications.count) apps and \(coordinator.familyActivitySelection.categories.count) categories selected")
+                            .font(AppTheme.Typography.caption)
+                            .foregroundColor(.white.opacity(0.8))
                     }
                 }
                 .padding(.horizontal, 40)
@@ -580,52 +611,35 @@ struct AppBlockingSetupPage: View {
         }
         .alert("Screen Time Permission", isPresented: $showingPermissionAlert) {
             Button("Open Settings") {
-                // Open Screen Time settings
+                if let settingsURL = URL(string: "App-prefs:SCREEN_TIME") {
+                    UIApplication.shared.open(settingsURL)
+                } else if let generalSettingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(generalSettingsURL)
+                }
             }
             Button("Later", role: .cancel) {}
         } message: {
             Text("Focus Flow needs Screen Time access to block distracting apps. You can grant permission in Settings.")
         }
+        .sheet(isPresented: $showingFamilyActivityPicker) {
+            FamilyActivityPicker(selection: $coordinator.familyActivitySelection)
+                .presentationDetents([.large])
+        }
     }
-}
-
-struct AppBlockingRow: View {
-    let appName: String
-    let bundleId: String
-    let icon: String
-    let isSelected: Bool
-    let action: () -> Void
     
-    var body: some View {
-        Button(action: {
-            action()
-            HapticStyle.light.trigger()
-        }) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundColor(isSelected ? .black : .white)
-                    .frame(width: 30)
-                
-                Text(appName)
-                    .font(AppTheme.Typography.body)
-                    .foregroundColor(isSelected ? .black : .white)
-                
-                Spacer()
-                
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.title3)
-                    .foregroundColor(isSelected ? .black : .white.opacity(0.5))
+    private func requestScreenTimePermission() {
+        Task {
+            let success = await appBlockingManager.requestScreenTimeAuthorization()
+            if success {
+                showingFamilyActivityPicker = true
+            } else {
+                showingPermissionAlert = true
+                coordinator.enableAppBlocking = false
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.m)
-                    .fill(isSelected ? Color.white : Color.white.opacity(0.2))
-            )
         }
     }
 }
+
 
 // MARK: - Page 6: Notification Setup
 struct NotificationSetupPage: View {

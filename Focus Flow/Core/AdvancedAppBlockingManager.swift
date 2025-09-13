@@ -8,21 +8,25 @@ import Combine
 class AdvancedAppBlockingManager: ObservableObject {
     @Published var isBlockingEnabled = false
     @Published var isScreenTimeConfigured = false
-    @Published var blockedApps: Set<ApplicationToken> = []
-    @Published var blockedCategories: Set<ActivityCategoryToken> = []
-    @Published var blockingLevel: BlockingLevel = .moderate
+    @Published var blockedApps: Set<Application> = []
+    @Published var blockedCategories: Set<ActivityCategory> = []
+    @Published var blockingLevel: BlockingLevel = .moderate {
+        didSet {
+            saveBlockingLevel()
+        }
+    }
     @Published var networkBlockingEnabled = false
     @Published var focusFilterEnabled = false
     
     // Store the current blocking configuration
-    private var currentBlockedApps: Set<ApplicationToken> = []
-    private var currentBlockedCategories: Set<ActivityCategoryToken> = []
+    private var currentBlockedApps: Set<Application> = []
+    private var currentBlockedCategories: Set<ActivityCategory> = []
     
     private let authorizationCenter = AuthorizationCenter.shared
     private let managedSettings = ManagedSettingsStore()
     private let deviceActivityCenter = DeviceActivityCenter()
     private let networkBlockingService = NetworkBlockingService()
-    private let screenTimeManager = ScreenTimeManager()
+    private var screenTimeManager = ScreenTimeManager()
     private var cancellables = Set<AnyCancellable>()
     
     enum BlockingLevel: String, CaseIterable {
@@ -40,10 +44,10 @@ class AdvancedAppBlockingManager: ObservableObject {
             }
         }
         
-        var blockedCategories: Set<ActivityCategoryToken> {
-            // Return empty set for now - would be populated with actual category tokens
+        var blockedCategories: Set<ActivityCategory> {
+            // Return empty set for now - would be populated with actual categories
             // from FamilyActivityPicker selection
-            return Set<ActivityCategoryToken>()
+            return Set<ActivityCategory>()
         }
         
         var allowsNotifications: Bool {
@@ -58,6 +62,7 @@ class AdvancedAppBlockingManager: ObservableObject {
     init() {
         checkAuthorizationStatus()
         setupNetworkMonitoring()
+        loadSavedFamilyActivitySelection()
     }
     
     // MARK: - Authorization & Setup
@@ -88,7 +93,7 @@ class AdvancedAppBlockingManager: ObservableObject {
     
     // MARK: - App Blocking Controls
     
-    func startBlocking(duration: TimeInterval = 0, customApps: Set<ApplicationToken>? = nil) {
+    func startBlocking(duration: TimeInterval = 0, customApps: Set<Application>? = nil) {
         guard isScreenTimeConfigured else {
             print("Screen Time not configured")
             return
@@ -121,6 +126,9 @@ class AdvancedAppBlockingManager: ObservableObject {
     func stopBlocking() {
         isBlockingEnabled = false
         
+        // Use ScreenTimeManager to stop blocking
+        screenTimeManager.stopBlocking()
+        
         // Remove all restrictions
         managedSettings.clearAllSettings()
         
@@ -139,7 +147,7 @@ class AdvancedAppBlockingManager: ObservableObject {
         HapticStyle.success.trigger()
     }
     
-    private func startScreenTimeBlocking(customApps: Set<ApplicationToken>? = nil) {
+    private func startScreenTimeBlocking(customApps: Set<Application>? = nil) {
         // Configure which apps to block
         let appsToBlock = customApps ?? getAppsForBlockingLevel()
         let categoriesToBlock = getCategoriesForBlockingLevel()
@@ -152,12 +160,16 @@ class AdvancedAppBlockingManager: ObservableObject {
         blockedApps = appsToBlock
         blockedCategories = categoriesToBlock
         
-        // Note: Shield configuration in Screen Time API requires:
-        // 1. A DeviceActivityMonitor extension to apply shields
-        // 2. FamilyActivitySelection for user to select apps
-        // 3. Proper entitlements and capabilities
+        // Convert to tokens for ScreenTimeManager
+        let appTokens = Set(appsToBlock.compactMap { $0.token })
+        let categoryTokens = Set(categoriesToBlock.compactMap { $0.token })
         
-        // For now, we store the configuration for later use
+        // Use ScreenTimeManager for actual blocking
+        screenTimeManager.startBlocking(
+            applications: appTokens,
+            categories: categoryTokens,
+            duration: 0 // Duration managed by timer
+        )
         
         // Configure shield restrictions
         configureShield()
@@ -248,15 +260,14 @@ class AdvancedAppBlockingManager: ObservableObject {
     
     // MARK: - Helper Methods
     
-    private func getAppsForBlockingLevel() -> Set<ApplicationToken> {
-        // This would be populated with actual app tokens
-        // For now, return the configured blocked apps
+    private func getAppsForBlockingLevel() -> Set<Application> {
+        // Return the configured blocked apps
         return blockedApps
     }
     
-    private func getCategoriesForBlockingLevel() -> Set<ActivityCategoryToken> {
+    private func getCategoriesForBlockingLevel() -> Set<ActivityCategory> {
         // Return the pre-configured blocked categories for the current blocking level
-        return blockingLevel.blockedCategories
+        return blockedCategories
     }
     
     private func scheduleBlockingNotification() {
@@ -314,7 +325,7 @@ class AdvancedAppBlockingManager: ObservableObject {
     func getBlockingStatistics() -> BlockingStatistics {
         return BlockingStatistics(
             sessionsBlocked: 0, // Not available in current NetworkBlockingService
-            appsBlocked: managedSettings.application.blockedApplications?.count ?? 0,
+            appsBlocked: blockedApps.count,
             totalTimeBlocked: calculateTotalBlockingTime(),
             mostBlockedApp: getMostBlockedApp(),
             blockingEffectiveness: calculateBlockingEffectiveness()
@@ -334,6 +345,88 @@ class AdvancedAppBlockingManager: ObservableObject {
     private func calculateBlockingEffectiveness() -> Double {
         // Calculate how effective the blocking has been
         return 0.85 // Placeholder - 85% effectiveness
+    }
+    
+    // MARK: - Family Activity Selection Integration
+    
+    private func loadSavedFamilyActivitySelection() {
+        screenTimeManager.loadSavedSelection()
+        
+        // Load from app group UserDefaults
+        guard let appGroupDefaults = UserDefaults(suiteName: "group.com.tobiasfu.Focus-Flow") else {
+            return
+        }
+        
+        // Load application objects
+        if let applicationData = appGroupDefaults.data(forKey: "applicationData") {
+            do {
+                if let applications = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSSet.self, from: applicationData) as? Set<Application> {
+                    blockedApps = applications
+                }
+            } catch {
+                print("Failed to load applications: \(error)")
+            }
+        }
+        
+        // Load category objects  
+        if let categoryData = appGroupDefaults.data(forKey: "categoryData") {
+            do {
+                if let categories = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSSet.self, from: categoryData) as? Set<ActivityCategory> {
+                    blockedCategories = categories
+                }
+            } catch {
+                print("Failed to load categories: \(error)")
+            }
+        }
+    }
+    
+    func updateFamilyActivitySelection(_ selection: FamilyActivitySelection) {
+        blockedApps = selection.applications
+        blockedCategories = selection.categories
+        
+        // Update ScreenTimeManager with tokens
+        let appTokens = Set(selection.applications.compactMap { $0.token })
+        let categoryTokens = Set(selection.categories.compactMap { $0.token })
+        screenTimeManager.updateBlockedApplications(appTokens)
+        screenTimeManager.updateBlockedCategories(categoryTokens)
+        
+        // Save to app group UserDefaults
+        saveFamilyActivitySelection(selection)
+    }
+    
+    private func saveFamilyActivitySelection(_ selection: FamilyActivitySelection) {
+        guard let appGroupDefaults = UserDefaults(suiteName: "group.com.tobiasfu.Focus-Flow") else {
+            return
+        }
+        
+        do {
+            // Save Application objects
+            let applicationData = try NSKeyedArchiver.archivedData(withRootObject: selection.applications, requiringSecureCoding: true)
+            appGroupDefaults.set(applicationData, forKey: "applicationData")
+            
+            // Save ActivityCategory objects
+            let categoryData = try NSKeyedArchiver.archivedData(withRootObject: selection.categories, requiringSecureCoding: true)
+            appGroupDefaults.set(categoryData, forKey: "categoryData")
+            
+            // Also save tokens for the Device Activity Monitor extension
+            let appTokens = Set(selection.applications.compactMap { $0.token })
+            let categoryTokens = Set(selection.categories.compactMap { $0.token })
+            
+            let applicationTokensData = try NSKeyedArchiver.archivedData(withRootObject: appTokens, requiringSecureCoding: true)
+            appGroupDefaults.set(applicationTokensData, forKey: "applicationTokensData")
+            
+            let categoryTokensData = try NSKeyedArchiver.archivedData(withRootObject: categoryTokens, requiringSecureCoding: true)
+            appGroupDefaults.set(categoryTokensData, forKey: "categoryTokensData")
+        } catch {
+            print("Failed to save family activity selection: \(error)")
+        }
+    }
+    
+    private func saveBlockingLevel() {
+        guard let appGroupDefaults = UserDefaults(suiteName: "group.com.tobiasfu.Focus-Flow") else {
+            return
+        }
+        appGroupDefaults.set(blockingLevel.rawValue, forKey: "blockingLevel")
     }
 }
 

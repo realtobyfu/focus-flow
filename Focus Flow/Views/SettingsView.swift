@@ -1,6 +1,7 @@
 import SwiftUI
 import StoreKit
 
+@available(iOS 15.0, *)
 struct SettingsView: View {
     @EnvironmentObject var blockingManager: AppBlockingManager
     @StateObject private var premiumStore = PremiumStore()
@@ -120,6 +121,21 @@ struct SettingsView: View {
                             }
                         }
                         .foregroundColor(.primary)
+                        
+                        if #available(iOS 15.0, *) {
+                            NavigationLink(destination: AdvancedBlockingSettingsView()) {
+                                HStack {
+                                    Label("Advanced Blocking", systemImage: "gearshape.fill")
+                                    Spacer()
+                                    Text("Screen Time")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
                     }
                 }
                 
@@ -523,6 +539,7 @@ enum PremiumPlan {
     }
 }
 
+@available(iOS 15.0, *)
 #Preview {
     SettingsView()
         .environmentObject(AppBlockingManager())
