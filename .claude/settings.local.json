@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodebuild:*)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -typecheck \"Focus Flow/Core/AdvancedAppBlockingManager.swift\" -import-objc-header \"Focus Flow/Focus_Flow-Bridging-Header.h\" -framework FamilyControls -framework DeviceActivity -framework ManagedSettings -framework Foundation -framework SwiftUI -framework Combine -framework UserNotifications -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -parse \"Focus Flow/Core/AdvancedAppBlockingManager.swift\" -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -typecheck \"/Users/realtobyfu/Documents/focus-flow/Focus Flow/Views/SettingsView.swift\" -import-objc-header \"/Users/realtobyfu/Documents/focus-flow/Focus Flow/Focus_Flow-Bridging-Header.h\" -framework FamilyControls -framework DeviceActivity -framework ManagedSettings -framework Foundation -framework SwiftUI -framework Combine -framework UserNotifications -framework StoreKit -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -parse \"/Users/realtobyfu/Documents/focus-flow/Focus Flow/Views/SettingsView.swift\" -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk)",
+      "Read(//Users/realtobyfu/Library/Developer/Xcode/DerivedData/Focus_Flow-bxqktwggccifaygptijsnjaytpel/Build/Intermediates.noindex/XCBuildData/**)",
+      "Bash(lsof:*)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -parse \"/Users/realtobyfu/Documents/focus-flow/Focus Flow/Views/AdvancedBlockingSettingsView.swift\" -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

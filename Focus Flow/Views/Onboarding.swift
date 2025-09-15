@@ -59,7 +59,7 @@ class OnboardingCoordinator: ObservableObject {
         UserDefaults.standard.set(enableNotifications, forKey: "notificationsEnabled")
         UserDefaults.standard.set(enableAppBlocking, forKey: "appBlockingEnabled")
         
-        // Save FamilyActivitySelection to app group UserDefaults for use by AppBlockingManager
+        // Save FamilyActivitySelection to app group UserDefaults for use by Screen Time blocking
         if enableAppBlocking && (!familyActivitySelection.applications.isEmpty || !familyActivitySelection.categories.isEmpty) {
             if let appGroupDefaults = UserDefaults(suiteName: "group.com.tobiasfu.Focus-Flow") {
                 do {
@@ -514,7 +514,7 @@ struct PresetButton: View {
 // MARK: - Page 5: App Blocking Setup
 struct AppBlockingSetupPage: View {
     @EnvironmentObject var coordinator: OnboardingCoordinator
-    @StateObject private var appBlockingManager = AdvancedAppBlockingManager()
+    @StateObject private var appBlockingManager = AppBlockingManager()
     @State private var showingPermissionAlert = false
     @State private var showingFamilyActivityPicker = false
     

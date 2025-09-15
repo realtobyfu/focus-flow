@@ -11,7 +11,6 @@ struct HomeView: View {
     @State private var showingTimeSelector = false
     @State private var showingTagSelector = false
     @State private var navigateToTimer = false
-    @State private var animateGradient = false
     @State private var particleAnimationPhase = 0.0
     @Binding var showingAddTask: Bool
     
@@ -25,8 +24,6 @@ struct HomeView: View {
                 if let gradient = themeManager.currentTheme.gradients.first {
                     gradient
                         .ignoresSafeArea()
-                        .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: animateGradient)
-                        .onAppear { animateGradient.toggle() }
                 } else {
                     LinearGradient(
                         colors: [Color(hex: "667eea"), Color(hex: "764ba2")],
@@ -36,18 +33,19 @@ struct HomeView: View {
                     .ignoresSafeArea()
                 }
                 
-                // Floating particles based on theme
+                // Floating particles based on theme (reduced intensity)
                 if themeManager.currentTheme.hasParticles {
                     ParticleEffectView(
                         particleSystem: themeManager.currentTheme.particleEffects,
                         animationPhase: particleAnimationPhase
                     )
                     .allowsHitTesting(false)
-                    .onAppear {
-                        withAnimation(.linear(duration: 20).repeatForever(autoreverses: false)) {
-                            particleAnimationPhase = 1.0
-                        }
-                    }
+                    .opacity(0.6) // Reduce particle opacity for subtlety
+//                    .onAppear {
+//                        withAnimation(.linear(duration: 60).repeatForever(autoreverses: false)) {
+//                            particleAnimationPhase = 1.0
+//                        }
+//                    }
                 }
                 
                 VStack(spacing: 0) {

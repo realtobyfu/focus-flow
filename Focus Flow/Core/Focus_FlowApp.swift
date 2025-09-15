@@ -16,11 +16,13 @@ struct Focus_FlowApp: App {
     
     // App Blocking Manager
     @StateObject private var blockingManager = AppBlockingManager()
-    @StateObject private var advancedBlockingManager = AdvancedAppBlockingManager()
     
     // Productivity Garden Manager
     @StateObject private var gardenManager = ProductivityGardenManager()
-    
+
+    // Environmental Theme Manager
+    @StateObject private var themeManager = EnvironmentalThemeManager()
+
     // App state
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     
@@ -44,8 +46,8 @@ struct Focus_FlowApp: App {
             }
             .environmentObject(taskViewModel)
             .environmentObject(blockingManager)
-            .environmentObject(advancedBlockingManager)
             .environmentObject(gardenManager)
+            .environmentObject(themeManager)
             .onAppear {
                 if hasSeenOnboarding {
                     // Refresh tasks when app launches

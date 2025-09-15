@@ -1,22 +1,20 @@
 import SwiftUI
 import StoreKit
+import FamilyControls
 
 @available(iOS 15.0, *)
 struct SettingsView: View {
-    @EnvironmentObject var blockingManager: AppBlockingManager
     @StateObject private var premiumStore = PremiumStore()
     
     @AppStorage("userName") private var userName = ""
     @AppStorage("defaultFocusDuration") private var defaultDuration = 25
     @AppStorage("defaultBreakDuration") private var defaultBreakDuration = 5
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
-    @AppStorage("appBlockingEnabled") private var appBlockingEnabled = false
     @AppStorage("ambientSoundsEnabled") private var ambientSoundsEnabled = true
     @AppStorage("playAmbientDuringBreaks") private var playAmbientDuringBreaks = false
     @AppStorage("timerNotificationSounds") private var timerNotificationSounds = true
     
     @State private var showingPremiumView = false
-    @State private var showingBlockedApps = false
     
     var body: some View {
         NavigationView {
@@ -103,37 +101,18 @@ struct SettingsView: View {
                 }
                 
                 // App Blocking
-                Section("App Blocking") {
-                    Toggle(isOn: $appBlockingEnabled) {
-                        Label("Enable App Blocking", systemImage: "app.badge.checkmark")
-                    }
-                    
-                    if appBlockingEnabled {
-                        Button(action: { showingBlockedApps = true }) {
+                if #available(iOS 15.0, *) {
+                    Section("App Blocking") {
+                        NavigationLink(destination: advancedBlockingView) {
                             HStack {
-                                Label("Blocked Apps", systemImage: "list.bullet")
+                                Label("App Blocking Settings", systemImage: "app.badge.checkmark")
                                 Spacer()
-                                Text("\(blockingManager.blockedBundleIds.count)")
-                                    .foregroundColor(.secondary)
-                                Image(systemName: "chevron.right")
+                                Text("Screen Time")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                            }
-                        }
-                        .foregroundColor(.primary)
-                        
-                        if #available(iOS 15.0, *) {
-                            NavigationLink(destination: AdvancedBlockingSettingsView()) {
-                                HStack {
-                                    Label("Advanced Blocking", systemImage: "gearshape.fill")
-                                    Spacer()
-                                    Text("Screen Time")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Image(systemName: "chevron.right")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
+//                                Image(systemName: "chevron.right")
+//                                    .font(.caption)
+//                                    .foregroundColor(.secondary)
                             }
                         }
                     }
@@ -209,9 +188,6 @@ struct SettingsView: View {
             .sheet(isPresented: $showingPremiumView) {
                 PremiumUpgradeView()
             }
-            .sheet(isPresented: $showingBlockedApps) {
-                BlockedAppsView()
-            }
         }
     }
     
@@ -219,6 +195,11 @@ struct SettingsView: View {
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
             SKStoreReviewController.requestReview(in: scene)
         }
+    }
+
+    @available(iOS 15.0, *)
+    private var advancedBlockingView: some View {
+        AppBlockingSettingsView()
     }
     
     private func getCurrentThemeName() -> String {
@@ -253,71 +234,6 @@ struct FeatureRow: View {
     }
 }
 
-// MARK: - Blocked Apps View
-struct BlockedAppsView: View {
-    @EnvironmentObject var blockingManager: AppBlockingManager
-    @Environment(\.dismiss) private var dismiss
-    
-    let suggestedApps = [
-        AppInfo(name: "Instagram", bundleId: "com.instagram.ios", icon: "camera.fill"),
-        AppInfo(name: "TikTok", bundleId: "com.zhiliaoapp.musically", icon: "play.rectangle.fill"),
-        AppInfo(name: "Twitter", bundleId: "com.twitter.ios", icon: "bubble.left.fill"),
-        AppInfo(name: "Facebook", bundleId: "com.facebook.Facebook", icon: "person.2.fill"),
-        AppInfo(name: "YouTube", bundleId: "com.google.ios.youtube", icon: "play.tv.fill"),
-        AppInfo(name: "Reddit", bundleId: "com.reddit.Reddit", icon: "quote.bubble.fill"),
-        AppInfo(name: "Snapchat", bundleId: "com.toyopagroup.picaboo", icon: "camera.viewfinder"),
-        AppInfo(name: "Discord", bundleId: "com.hammerandchisel.discord", icon: "message.fill")
-    ]
-    
-    var body: some View {
-        NavigationView {
-            List {
-                Section("Suggested Apps") {
-                    ForEach(suggestedApps) { app in
-                        HStack {
-                            Image(systemName: app.icon)
-                                .font(.title3)
-                                .foregroundColor(AppTheme.Colors.primary)
-                                .frame(width: 30)
-                            
-                            Text(app.name)
-                                .font(.body)
-                            
-                            Spacer()
-                            
-                            Toggle("", isOn: Binding(
-                                get: { blockingManager.blockedBundleIds.contains(app.bundleId) },
-                                set: { isBlocked in
-                                    if isBlocked {
-                                        blockingManager.addBlockedApp(app.bundleId)
-                                    } else {
-                                        blockingManager.removeBlockedApp(app.bundleId)
-                                    }
-                                }
-                            ))
-                            .labelsHidden()
-                        }
-                    }
-                }
-                
-                Section {
-                    Text("Apps selected here will be blocked during focus sessions. You can customize this list anytime.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .navigationTitle("Blocked Apps")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
 
 // MARK: - Premium Upgrade View
 struct PremiumUpgradeView: View {
@@ -507,12 +423,6 @@ struct PlanOption: View {
 }
 
 // MARK: - Models
-struct AppInfo: Identifiable {
-    let id = UUID()
-    let name: String
-    let bundleId: String
-    let icon: String
-}
 
 enum PremiumPlan {
     case monthly, yearly
@@ -542,5 +452,4 @@ enum PremiumPlan {
 @available(iOS 15.0, *)
 #Preview {
     SettingsView()
-        .environmentObject(AppBlockingManager())
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ThemeSettingsView: View {
-    @StateObject private var environmentManager = EnvironmentalThemeManager()
+    @EnvironmentObject var themeManager: EnvironmentalThemeManager
     @AppStorage("themeMode") private var themeMode: String = "automatic"
     @AppStorage("selectedTheme") private var selectedTheme: String = "morningMist"
     @State private var showingCustomColorPicker = false
@@ -91,18 +91,18 @@ struct ThemeSettingsView: View {
     
     private func getCurrentTheme() -> EnvironmentalTheme {
         if themeMode == "automatic" {
-            return environmentManager.currentTheme
+            return themeManager.currentTheme
         } else {
             return EnvironmentalTheme.allThemes.first { $0.id == selectedTheme } ?? .morningMist
         }
     }
-    
+
     private func updateTheme() {
         if themeMode == "manual" {
             let theme = EnvironmentalTheme.allThemes.first { $0.id == selectedTheme } ?? .morningMist
-            environmentManager.setTheme(theme)
+            themeManager.setTheme(theme)
         } else {
-            environmentManager.updateForTimeOfDay()
+            themeManager.updateForTimeOfDay()
         }
     }
     

@@ -7,9 +7,8 @@ struct TimerView: View {
     
     @EnvironmentObject var taskViewModel: TaskViewModel
     @EnvironmentObject var blockingManager: AppBlockingManager
-    @EnvironmentObject var advancedBlockingManager: AdvancedAppBlockingManager
     @StateObject private var soundManager = AmbientSoundManager()
-    @StateObject private var environmentManager = EnvironmentalThemeManager()
+    @EnvironmentObject var themeManager: EnvironmentalThemeManager
     
     @State private var timeRemaining: Int = 0
     @State private var timerRunning = false
@@ -40,7 +39,7 @@ struct TimerView: View {
         ZStack {
             // Environmental Background
             EnvironmentalBackground(
-                theme: environmentManager.currentTheme,
+                theme: themeManager.currentTheme,
                 animated: timerRunning
             )
             .ignoresSafeArea()
@@ -217,7 +216,7 @@ struct TimerView: View {
             timeRemaining = Int(task.blockMinutes * 60)
         }
         
-        environmentManager.updateForTimeOfDay()
+        themeManager.updateForTimeOfDay()
         
         // Load ambient sound if available
         if let sound = soundManager.soundForFocusMode(focusMode) {
@@ -316,11 +315,10 @@ struct TimerView: View {
     
     private func completeSession() {
         pauseTimer()
-        // Stop blocking with both managers
+        // Stop blocking with Screen Time manager
         if #available(iOS 15.0, *) {
-            advancedBlockingManager.stopBlocking()
+            blockingManager.stopBlocking()
         }
-        blockingManager.stopBlocking()
         showingCompletionSheet = true
     }
     
@@ -344,11 +342,10 @@ struct TimerView: View {
         timer?.invalidate()
         timer = nil
         soundManager.stop()
-        // Stop blocking with both managers
+        // Stop blocking with Screen Time manager
         if #available(iOS 15.0, *) {
-            advancedBlockingManager.stopBlocking()
+            blockingManager.stopBlocking()
         }
-        blockingManager.stopBlocking()
     }
     
     private func saveTimerState() {
@@ -376,10 +373,8 @@ struct TimerView: View {
     }
     
     private func startBlockingIfEnabled() {
-        // Use AdvancedAppBlockingManager if available on iOS 15+
-        if #available(iOS 15.0, *), advancedBlockingManager.isScreenTimeConfigured {
-            advancedBlockingManager.startBlocking()
-        } else if blockingManager.isBlockingEnabled {
+        // Use Screen Time blocking if available and configured on iOS 15+
+        if #available(iOS 15.0, *), blockingManager.isScreenTimeConfigured {
             blockingManager.startBlocking()
         }
     }

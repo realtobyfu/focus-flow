@@ -344,13 +344,13 @@ struct NavigationContainer: View {
     @Binding var selectedTab: Int
     @State private var showingSettings = false
     @State private var showingAddTask = false
-    @StateObject private var environmentManager = EnvironmentalThemeManager()
+    @EnvironmentObject var themeManager: EnvironmentalThemeManager
     
     var body: some View {
         ZStack {
             // Environmental Background
             EnvironmentalBackground(
-                theme: environmentManager.currentTheme,
+                theme: themeManager.currentTheme,
                 animated: true
             )
             .edgesIgnoringSafeArea(.all)
@@ -370,7 +370,7 @@ struct NavigationContainer: View {
             }
         }
         .onAppear {
-            environmentManager.updateForTimeOfDay()
+            themeManager.updateForTimeOfDay()
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
@@ -387,7 +387,6 @@ struct ModernTopBar: View {
     @Binding var showingSettings: Bool
     @Binding var showingAddTask: Bool
     @EnvironmentObject var taskViewModel: TaskViewModel
-    @EnvironmentObject var blockingManager: AppBlockingManager
     
     var body: some View {
         VStack(spacing: 0) {
@@ -409,14 +408,6 @@ struct ModernTopBar: View {
                 
                 // Contextual Actions
                 HStack(spacing: 12) {
-                    // App Blocking Status
-                    if selectedTab == 0 && blockingManager.isBlockingEnabled {
-                        StatusIndicator(
-                            icon: "shield.fill",
-                            color: Color.themePrimary,
-                            isActive: true
-                        )
-                    }
                     
                     // Add Task Button (Tasks tab)
                     if selectedTab == 1 {
